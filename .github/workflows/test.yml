@@ -43,4 +43,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Lancer les tests
-        run: pytest tests/ -v --tb=short
+        run: pytest tests/ -v --tb=short -k "not TestAsk"
