@@ -1,0 +1,46 @@
+name: Tests MedAgent
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    # 1. On demande à GitHub de lancer un faux PostgreSQL le temps des tests
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: medagent
+          POSTGRES_PASSWORD: medagent123
+          POSTGRES_DB: medagentdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    #2. On donne au robot les mêmes variables d'environnement que ton fichier .env
+    env:
+      DATABASE_URL: postgresql://medagent:medagent123@localhost:5432/medagentdb
+      OLLAMA_BASE_URL: http://localhost:11434
+      API_KEY: test_ci_key_pour_le_robot
+      MAX_TOKENS_PER_REQUEST: 500
+      MAX_REQUESTS_PER_MINUTE: 20
+
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Lancer les tests
+        run: pytest tests/ -v --tb=short -k "not TestAsk"

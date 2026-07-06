@@ -1,10 +1,14 @@
-# tests/test_api.py
+#tests/test_api.py
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 from app.config import settings
+from app.database import create_tables # <-- AJOUT 1 : Importer la fonction
 
-# TestClient permet d’appeler l’API sans démarrer un serveur réel
+#AJOUT 2 : Créer les tables avant même d'instancier le client
+create_tables() 
+
+#TestClient permet d’appeler l’API sans démarrer un serveur réel
 client = TestClient(app)
 API_KEY = settings.api_key
 
