@@ -1,0 +1,353 @@
+DrepaViT: An interpretable hybrid CNN–Transformer
+model for improved red blood cell classification
+First Author1[0000-1111-2222-3333] and Second Author2[1111-2222-3333-4444]
+1 Princeton University, Princeton NJ 08544, USA
+2 Springer Heidelberg, Tiergartenstr. 17, 69121 Heidelberg, Germany
+lncs@springer.com
+Abstract.
+We present DrepaViT, a novel hybrid deep learning model for red blood cell
+classification in the context of sickle cell disease (SCD) diagnosis. Combining
+ResNet-50 and Vision Transformer (ViT) architectures, DrepaViT captures both
+local and global morphological features. Trained on the SKDrepaData-v2 dataset—a curated collection of 1,489 annotated microscopy images—our model
+achieves state-of-the-art performance with 93.33% accuracy, 93.30% F1-score,
+and an AUC of 0.9456. We further enhance interpretability using Grad-CAM,
+demonstrating clinically relevant feature localization. A web-based interface supports real-time analysis, improving diagnostic accessibility in low-resource settings. Our results highlight DrepaViT’s potential as a robust, interpretable tool
+for automated hematological screening of SCD.
+Keywords: Sickle Cell Disease, Red Blood Cell Classification, Vision Transformer, Deep Learning, Explainable AI, Medical Imaging.
+1 Introduction
+Sickle cell disease (SCD) is a severe genetic disorder caused by a point mutation in
+the β-globin gene, resulting in abnormal hemoglobin S (HbS) [1]. Under low oxygen,
+HbS polymerizes, deforming red blood cells into a sickle shape and causing vaso-occlusion, anemia, and serious complications [2], [3]. SCD affects over 300,000 newborns
+annually in sub-Saharan Africa [4]; in Senegal, 1.9% of newborns present the severe
+SS form, and 11.1% of the population carries the HbS allele [5], [6], [7]. Without early
+screening, more than half of affected children die before age five.
+Traditional diagnosis relies on manual microscopy, limited by subjectivity, cost, and
+the need for skilled personnel—resources often lacking in low-income regions [8], [9],
+[10]. These constraints hinder early detection, while computer-aided diagnosis (CAD)
+systems offer a scalable solution through automated red blood cell classification [11],
+[12].
+Although convolutional neural networks (CNNs) have achieved strong results in
+medical imaging, their local receptive fields limit their ability to model global dependencies—critical in SCD due to the high morphological variability of sickled cells and2 F. Author and S. Author
+varying smear conditions[13], [14]. Vision Transformers (ViTs) have emerged as a
+promising solution, leveraging self-attention to model long-range spatial relationships
+[15]. However, ViTs require large annotated datasets—often impractical in clinical settings due to the cost and scarcity of expert-labelled data. This has driven the development of hybrid architectures that combine CNNs and Transformers to capture both local
+and global features for robust SCD detection.
+In this study, we introduce DrepaVit, a novel hybrid model that combines ResNet-
+50 [16] for local morphological feature extraction with Vision Transformers (ViT) [15]
+for global contextual modelling. Designed for enhanced diagnostic accuracy and reduced processing time, DrepaVit addresses the challenges of sickle cell disease (SCD)
+detection in resource-limited environments such as sub-Saharan Africa.
+Our key contributions are as follows: (1) A dual-branch architecture merging CNN
+and Transformer features for robust red blood cell (RBC) classification; (2) A residualnormalized fusion mechanism to combine local and global representations effectively;
+(3) A tailored training pipeline using Focal Loss and data augmentation to mitigate class
+imbalance; (4) Release of SKDrepaData-v2, a new annotated dataset of blood smear
+images from African SCD patients; (5) Comprehensive benchmarking against state-ofthe-art RBC classification models; (6) Integration of Grad-CAM for interpretability and
+model transparency; (7) Deployment of an interactive web interface to facilitate clinical
+adoption.
+The remainder of this paper is organized as follows: Section 2 reviews related work
+on SCD classification. Section 3 details the DrepaVit architecture. Section 4 presents
+the dataset, experimental setup, and metrics. Section 5 reports and analyses the results.
+Section 6 discusses comparisons with state-of-the-art methods. Section 7 concludes
+with future directions.
+2 Related Work
+Historically, sickle cell disease (SCD) diagnosis has relied on manual microscopy, a
+process that is time-consuming, expensive, and prone to inter-observer variability [17].
+Early AI approaches addressed these limitations through handcrafted feature extraction
+combined with classifiers like SVM, KNN, or Random Forest [18], [19], [20]. Though
+applied with some success in RBC classification [21], [22], [23], [24], these methods
+heavily depend on accurate segmentation and are sensitive to noise and imaging variability.
+Deep learning, particularly convolutional neural networks (CNNs), has significantly
+advanced RBC analysis by learning features directly from images[25]. Xu et al. [14]
+achieved 87.5% accuracy and 0.94 AUC using a CNN to classify eight RBC types.
+Other efforts have leveraged U-Net [26], transfer learning[27], and benchmarking with
+pretrained models [28], [29], [30], [31]. For example, ResNet-50 reached 93.88% accuracy [32], while DAPN-48 achieved 100% [33]. However, CNNs remain limited in
+modeling long-range dependencies, which are crucial in detecting subtle morphological
+differences in blood cells[34], [35].Contribution Title (shortened if too long) 3
+To overcome these limitations, Vision Transformers (ViTs) have emerged, offering
+strong global contextual modeling [36]. Applications in medical imaging—from mammography [37] to dermatology [38]—have shown ViTs often outperform CNNs, especially in multimodal and fine-grained tasks [34], [39], [40]. Yet, their sensitivity to adversarial noise has prompted robust adaptations like SEViT [41].
+Hybrid models that integrate CNNs and Transformers combine local feature extraction with global representation learning. Architectures such as PHTrans [42], CTCNet
+[43], and MedViT [44] exemplify this synergy. However, in SCD diagnosis, these hybrid models remain underexplored. To bridge this gap, we propose DrepaViT, a novel
+CNN-Transformer architecture tailored for precise and interpretable classification of
+sickled red blood cells.
+3 Proposed DrepaVit Model
+DrepaViT is a hybrid architecture that combines ResNet-50 (CNN)[16] and a Vision
+Transformer (ViT) [15] to automatically classify red blood cells into three categories—
+normal, sickled, and other types—from microscopic images, thereby supporting SCD
+diagnosis. The model consists of two parallel branches that process the input image
+simultaneously for enhanced robustness:
+1. A CNN branch based on ResNet-50 extracts hierarchical local spatial features
+at multiple depths.
+2. A Transformer branch employs ViT to capture global contextual relationships
+via sequential patch processing.
+The input image (224×224×3) is fed into both branches. The resulting features are
+fused, normalized, and passed through a multilayer perceptron (MLP) classifier, which
+outputs class probabilities for the three target categories. Fig. 1 illustrates the complete
+DrepaViT architecture.
+3.1 CNN-ResNet-50 Branch
+The CNN branch of DrepaViT leverages a ResNet-50 [16] pre-trained on ImageNet as
+a local feature extractor. To adapt it for our task, we remove the original classification
+head and retain the convolutional layers up to the final residual block (Block_5), which
+outputs a feature map 𝐹𝐶𝑁𝑁𝜖 𝑅(2048𝑋7𝑋7). A 1×1 convolution is applied for dimensionality reduction, projecting the channels into a latent space of dimension 𝐷ℎ = 256 followed by adaptive average pooling and flattening. This yields a compact vector representation 𝐹′𝐶𝑁𝑁𝜖 𝑅𝐷ℎ as formalized in Eq.(1). This vector is subsequently integrated in
+the fusion module with the global features extracted by the Transformer branch.
+𝐹′𝐶𝑁𝑁 = 𝐹𝑙𝑎𝑡𝑡𝑒𝑛 (𝐴𝑣𝑔𝑃𝑜𝑜𝑙(𝐶𝑜𝑛𝑣1×1(𝐹𝐶𝑁𝑁))) 𝜖 𝑅𝐷ℎ . (𝟏)4 F. Author and S. Author
+Figure 1: Proposed DrepaViT Architecture
+3.2 Transform Branch
+The Transformer branch leverages a Vision Transformer (ViT) [15] to capture global
+dependencies in blood smear images. The input image 𝑋𝜖 𝑅3×224×224 is divided into
+𝑁 = (224/16)2 = 196 non-overlapping patches of size 16×16. Each patch is projected into a 256-dimensional latent space using a 2D conv (kernel/stride = 16).
+𝑥
+𝑝 = 𝐶𝑜𝑛𝑣16×16,𝑠𝑡𝑟𝑖𝑑𝑒𝑠=16(𝑋) 𝜖 𝑅𝐷ℎ×𝐻𝑃×𝑊𝑃 (𝟐)
+The sequence 𝑥𝑝 𝜖 𝑅𝑁× 𝐷ℎ is prepended with a learnable class token 𝑥𝑐𝑙𝑠 𝜖𝑅1× 𝐷ℎ, and
+positional embedding 𝐸𝑝𝑜𝑠 𝜖 𝑅(𝑁+1)× 𝐷ℎ are added: 𝑥 = 𝑆 [𝑥𝑐𝑙𝑠; 𝑥𝑝] + 𝐸𝑝𝑜𝑠.
+A dropout (p = 0.1) is applied after position embedding to regularize learning. The
+sequence then passes through L=4 Transformer blocks, each composed of Multi-Head
+Self-Attention (MHSA) and a two-layer MLP:
+𝐴𝑡𝑡𝑒𝑛𝑡𝑖𝑜𝑛(𝑄, 𝐾, 𝑉) = 𝑠𝑜𝑓𝑡𝑚𝑎𝑥 (
+𝑄𝐾𝑇
+√𝐷ℎℎ) 𝑉. (𝟑)
+𝑀𝐿𝑃(𝑥) = 𝐿𝑖𝑛𝑒𝑎𝑟2 (𝐺𝐸𝐿𝑈(𝐿𝑖𝑛𝑒𝑎𝑟1(𝑥))) (𝟒)Contribution Title (shortened if too long) 5
+Each block includes residual connections and LayerNorm following the pre-norm
+scheme: 𝑥′ = 𝑥 + 𝑀𝐻𝑆𝐴(𝐿𝑎𝑦𝑒𝑟𝑁𝑜𝑟𝑚(𝑥)), 𝑥′′ = 𝑥′ + 𝑀𝐿𝑃(𝐿𝑎𝑦𝑒𝑟𝑁𝑜𝑟𝑚(𝑥′))
+3.3 Fusion and Classification
+At the output of the Transformer branch, the class token 𝑥𝑐𝑙𝑠 is fused with the CNN
+feature vector 𝐹′𝐶𝑁𝑁𝜖 𝑅𝐷ℎ via element-wise addition and LayerNorm: 𝑥𝑓𝑢𝑠𝑒𝑑 =
+𝐿𝑎𝑦𝑒𝑟𝑁𝑜𝑟𝑚 (𝑥𝑐𝑙𝑠 + 𝐹′𝐶𝑁𝑁).
+The fused vector is then passed to a classification head including a linear layer,
+ReLU activation, dropout, and L2 normalization. The final prediction is computed as:
+𝑦 = 𝐿𝑖𝑛𝑒𝑎𝑟(𝑥𝑓𝑢𝑠𝑒𝑑) 𝜖 𝑅3 (𝟓)
+This additive fusion effectively combines complementary features: global spatial
+structure from ViT and fine-grained morphology from CNN, enhancing robustness and
+accuracy in classifying red blood cells into normal, sickled, and other abnormal types.
+4 Experiments
+4.1 Dataset: SKDrepaData-v2
+We conducted our experiments on SKDrepaData-v2 [45], a publicly available dataset
+comprising 1,489 Giemsa-stained blood smear images from 20 confirmed SCD patients. Samples were collected from two Senegalese institutions: UMRED (University
+of Thiès) and the Children’s Hospital of Diamniadio. Images (224 × 224 × 3) were
+denoised using Noise2Void [46] and manually annotated by hematologists into three
+classes: normal, sickled, and other abnormal cells. The dataset reflects clinical class
+imbalance; distribution details are shown in Fig. 2.
+Figure 2: Overview of the dataset showing class distribution and sample cell images
+4.2 Class Imbalance and Data Augmentation
+Due to the natural imbalance in red blood cell types, two complementary strategies
+were adopted to improve model generalization:6 F. Author and S. Author
+Data augmentation was applied to the training set using random crops with resizing, horizontal and vertical flips, color jitter, and normalization. These transformations
+aimed to increase sample diversity, particularly for underrepresented classes, and to
+reduce overfitting.
+Weighted sampling was used during training to balance class frequency across
+mini-batches by assigning higher weights to minority classes.
+The dataset was split into 70% for training (1,131 images), 20% for validation (268
+images), and 10% for testing (90 images).
+4.3 Training Setup
+DrepaViT was trained for 100 epochs using the AdamW optimizer with a CosineAnnealingLR learning rate scheduler. To address class imbalance during training, we used
+Focal Loss[47], which down-weights the contribution of well-classified samples and
+focuses learning on hard-to-classify examples. Key hyperparameters are summarized
+in Table 1.
+Table 1: Training Hyperparameters
+Hyperparameter Value
+Patch size (ViT) (16 x 16 x 3)
+Number of Transformer blocks 4
+Hidden dimension (Transformer) 256
+MLP dimension (Transformer) 512
+Number of attention heads 4
+Dropout rate 0.1
+Batch size 32
+Learning rate 1e-4
+Weight decay (L2) 1e-4
+Loss function Focal Loss (γ=2)
+Activation function GeLU
+4.4 Evaluation Metrics
+To assess model performance, we used several standard metrics: accuracy, precision,
+recall, F1-score, and Area Under the ROC Curve (AUC). AUC was computed from
+ROC curves by plotting true positive rate against false positive rate across different
+thresholds. Higher AUC values indicate better class separability.
+5 Results and Discussion
+5.1 Quantitative Evaluation on SKDrepaData-v2
+To assess DrepaViT, we benchmarked it against state-of-the-art CNNs and a baseline
+Vision Transformer (ViT) on the SKDrepaData-v2 dataset. Results are reported onContribution Title (shortened if too long) 7
+training, validation, and test sets. DrepaViT outperformed the ViT model across all
+splits. On validation, DrepaViT reached 92.54% accuracy vs. 87.50% for ViT (loss:
+0.0189 vs. 0.4033). On test data, DrepaViT achieved 93.33% accuracy, 93.82% precision, and 97.56% AUC (Table 2), surpassing ViT (accuracy: 80.00%, AUC: 90.43%).
+Table 2: Performance of the models on the test set (SKDrepaData-v2)
+Model Acc. P. Recall F1-Score TNR MCC AUC
+ViT/16 80 82.57 80 80.23 90 70.84 90.43
+DrepaViT 93.33 93.82 93.33 93.30 96.80 90.27 94.56
+The training and validation curves indicate that DrepaViT converges faster and more
+stable than ViT, with lower validation loss and higher accuracy—demonstrating better
+generalization. These plots are not shown here due to space constraints. Results in Table 2 and ROC curves in Fig. 3(a-b) reveal DrepaViT's superior class separation, particularly on rare or ambiguous cell types. DrepaViT shows minimal confusion between
+normal, sickled, and other abnormal cells.
+Figure 3 : ROC Curves of the Models Evaluated on the Test Set: (a) ViT, (b) DrepaViT
+5.2 Model Interpretability and Feature Analysis
+To improve interpretability, we used Grad-CAM[48], which highlights key regions influencing predictions. Although this plot is not shown due to space constraints,
+DrepaViT consistently localizes discriminative morphological patterns. This results
+from the complementary strengths of its hybrid CNN–Transformer branches design,
+combining fine-grained features from ResNet-50 with global context modeling from
+ViT. Their additive fusion optimally integrates the feature streams.
+5.3 Clinical Relevance and Deployment
+We developed a web interface [49] enabling clinicians to upload microscopy images
+and receive real-time cell classification. DrepaViT’s classification accuracies reach8 F. Author and S. Author
+99.97% (normal), 99.76% (sickled), and 90.12% (other), supporting robust deployment
+in clinical workflows. These results highlight the potential of DrepaViT as a decisionsupport tool for hematology, particularly in low-resource settings.
+5.4 Comparison with State-of-the-Art
+DrepaViT significantly outperforms CNN-based baselines such as VGG16/19, MobileNetV2, EfficientNetB0, InceptionV3, and Xception (Table 3). While ResNet50 and
+ViT alone achieve 85.54% and 80.09% respectively, their hybrid fusion yields 93.33%
+accuracy. Prior works [14], [26], [28], [29], [30] often relied on segmentation or small
+datasets and lacked robustness. DrepaViT integrates Focal Loss and data augmentation
+to address class imbalance, achieving superior recall on minority classes (e.g., 93.33%
+vs. 62.65% for Xception). Grad-CAM analysis confirms DrepaViT's attention to discriminative regions, enhancing both interpretability and trustworthiness.
+Table 3: Comparison Results of State-of-the-Art Models on the SKDrepaData-v2 Dataset
+Models Accuracy Precision Recall F1-Score MCC
+MobileNetV2 0.9036 0.9036 0.9036 0.9031 0.8551
+EfficientNetB0 0.8675 0.8808 0.8675 0.8708 0.8015
+VGG16 0.9036 0.9036 0.9036 0.9036 0.8551
+VGG19 0.8434 0.8546 0.8434 0.8394 0.7699
+ResNet50 0.8554 0.8607 0.8554 0.8525 0.7831
+Xception 0.6265 0.7009 0.6265 0.6077 0.4727
+InceptionV3 0.7831 0.7816 0.7831 0.7453 0.6883
+ViT/16 0.8000 0.8257 0.8000 0.8023 0.7084
+DrepaViT 0.9333 0.9382 0.9333 0.9330 0.9027
+6 Conclusion and Future Work
+In this study, we introduced DrepaViT, a hybrid deep learning model that integrates a
+CNN branch (ResNet-50) with a Transformer branch (ViT) for the classification of red
+blood cells in the context of sickle cell disease diagnosis. By leveraging both local features and global contextual relationships, our approach achieves state-of-the-art performance on the SKDrepaData-v2 dataset, with an accuracy of 93.33%, F1-score of
+93.30%, and AUC of 94.56 on the test set.
+Interpretability is ensured through Grad-CAM visualizations, highlighting discriminative regions crucial for clinical validation. An interactive web interface further supports its deployment in low-resource settings.
+Future work includes hyperparameter tuning and integration of multimodal data to
+enhance the model’s robustness. Overall, DrepaViT offers a promising step toward automated, interpretable, and accessible tool, with strong potential for hematological
+screening and patient monitoring.Contribution Title (shortened if too long) 9
+[1] « Sickle Cell Anemia, a Molecular Disease | Science ». https://www.science.org/doi/10.1126/science.110.2865.543
+[2] D. C. Rees, T. N. Williams, et M. T. Gladwin, « Sickle-cell disease », Lancet,
+vol. 376, no 9757, p. 2018‑2031, déc. 2010, doi: 10.1016/S0140-6736(10)61029-
+X.
+[3] I. M. Idris, E. A. Botchwey, et H. I. Hyacinth, « Sickle cell disease as an accelerated aging syndrome », Exp Biol Med (Maywood), vol. 247, no 4, p. 368‑374,
+févr. 2022, doi: 10.1177/15353702211068522.
+[4] F. B. Piel, S. I. Hay, S. Gupta, D. J. Weatherall, et T. N. Williams, « Global
+Burden of Sickle Cell Anaemia in Children under Five, 2010–2050: Modelling
+Based on Demographics, Excess Mortality, and Interventions », PLOS Medicine,
+vol. 10, no 7, p. e1001484, juill. 2013, doi: 10.1371/journal.pmed.1001484.
+[5] M. E. Odunvbun, A. A. Okolo, et C. M. Rahimy, « Newborn screening for sickle
+cell disease in a Nigerian hospital », Public Health, vol. 122, no 10, p. 1111‑1116,
+oct. 2008, doi: 10.1016/j.puhe.2008.01.008.
+[6] N. Seck, D. Makalou, D. Doupa, S. Lo, et I. Diagne, « Diagnostic néonatal et
+prise en charge précoce de la drépanocytose à Saint-Louis (Sénégal) : bilan des
+quatre premières années d’activité du Centre de recherche et de prise en charge
+ambulatoire de la drépanocytose (CERPAD) de l’université Gaston-Berger de
+Saint-Louis », Périnatalité, vol. 14, no 4, p. 180‑181, 2022, doi: 10.3166/rmp-
+2022-0152.
+[7] L. Chirande et al., « Building capacity for pediatric hematological diseases in
+Sub-Saharan Africa », Blood Advances, vol. 9, no 4, p. 939‑947, févr. 2025, doi:
+10.1182/bloodadvances.2024012983.
+[8] S. Chakravorty et T. N. Williams, « Sickle cell disease: a neglected chronic disease of increasing global health importance », Arch Dis Child, vol. 100, no 1, p.
+48‑53, janv. 2015, doi: 10.1136/archdischild-2013-303773.
+[9] C. Patgiri et A. Ganguly, « Red Blood Cell and Sickle Cell Detection from Microscopic Blood Images of Sickle Cell Anemic Patient », in 2019 International
+Conference on Wireless Communications Signal Processing and Networking
+(WiSPNET), mars 2019, p. 474‑478. doi: 10.1109/WiSPNET45539.2019.9032790.
+[10] S. Chakravorty et T. N. Williams, « Sickle cell disease: a neglected chronic disease of increasing global health importance », janv. 2015, doi: 10.1136/archdischild-2013-303773.
+[11] A. Balde, A. Bassene, L. Faty, M. Soumboundou, O. Sall, et Y. Faye, « Recent
+Artificial Intelligence Advances in Detection and Diagnosis of Sickle Cell Disease: A review », in 2023 IEEE International Conference on Big Data (BigData),
+déc. 2023, p. 3650‑3659. doi: 10.1109/BigData59044.2023.10386158.
+[12] A. Bassene et B. Gueye, « A Low Positive Rate Attendant for Sickle Cell Anemia
+Screening in Health and Medicine », in 2024 International Conference on Ubiquitous Networking (UNet), juin 2024, p. 1‑6. doi:
+10.1109/UNet62310.2024.10794706.10 F. Author and S. Author
+[13] S. Suganyadevi, V. Seethalakshmi, et K. Balasamy, « A review on deep learning
+in medical image analysis », Int J Multimed Info Retr, vol. 11, no 1, p. 19‑38,
+mars 2022, doi: 10.1007/s13735-021-00218-1.
+[14] M. Xu, D. P. Papageorgiou, S. Z. Abidi, M. Dao, H. Zhao, et G. E. Karniadakis,
+« A deep convolutional neural network for classification of red blood cells in
+sickle cell anemia », PLOS Computational Biology, vol. 13, no 10, p. e1005746,
+oct. 2017, doi: 10.1371/journal.pcbi.1005746.
+[15] A. Dosovitskiy et al., « An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale », 3 juin 2021, arXiv: arXiv:2010.11929. doi:
+10.48550/arXiv.2010.11929.
+[16] K. He, X. Zhang, S. Ren, et J. Sun, « Deep Residual Learning for Image Recognition », 10 décembre 2015, arXiv: arXiv:1512.03385. doi:
+10.48550/arXiv.1512.03385.
+[17] P. K. Das, S. Meher, R. Panda, et A. Abraham, « A Review of Automated Methods for the Detection of Sickle Cell Disease », IEEE Reviews in Biomedical Engineering, vol. 13, p. 309‑324, 2020, doi: 10.1109/RBME.2019.2917780.
+[18] N. Alharbi, R. Bameer, S. Geddan, et H. Alharbi, « Recent Advances and Machine Learning Techniques on Sickle Cell Disease », Future Computing and Informatics Journal, vol. 5, no 1, déc. 2020, doi:
+http://doi.org/10.54623/fue.fcij.5.1.4.
+[19] J. W. Bacus, « Quantitative Red Cell Morphology », Consulté le: 5 mai 2025.
+[En ligne]. Disponible sur: https://karger.com/books/book/837/chapter/5605846/Quantitative-Red-Cell-Morphology
+[20] M. Abdulraheem Fadhel, A. J. Humaidi, et S. R. Oleiwi, « Image processingbased diagnosis of sickle cell anemia in erythrocytes », in 2017 Annual Conference on New Trends in Information & Communications Technology Applications
+(NTICT), mars 2017, p. 203‑207. doi: 10.1109/NTICT.2017.7976124.
+[21] B. Sen, A. Ganesh, A. Bhan, S. Dixit, et A. Goyal, « Machine learning based
+Diagnosis and Classification Of Sickle Cell Anemia in Human RBC », in 2021
+Third International Conference on Intelligent Communication Technologies and
+Virtual Mobile Networks (ICICV), févr. 2021, p. 753‑758. doi:
+10.1109/ICICV50876.2021.9388610.
+[22] V. Sharma, A. Rathore, et G. Vyas, « Detection of sickle cell anaemia and thalassaemia causing abnormalities in thin smear of human blood sample using image processing », in 2016 International Conference on Inventive Computation
+Technologies (ICICT), août 2016, p. 1‑5. doi:
+10.1109/INVENTIVE.2016.7830136.
+[23] A. S, K. Ganesan, et B. B. K, « A novel deep learning approach for sickle cell
+anemia detection in human RBCs using an improved wrapper-based feature selection technique in microscopic blood smear images », Biomedical Engineering
+/ Biomedizinische Technik, vol. 68, no 2, p. 175‑185, avr. 2023, doi: 10.1515/bmt-
+2021-0127.
+[24] S. Yeruva, M. S. Varalakshmi, B. P. Gowtham, Y. H. Chandana, et P. K. Prasad,
+« Identification of Sickle Cell Anemia Using Deep Neural Networks », Emerging
+Science Journal, vol. 5, no 2, Art. no 2, avr. 2021, doi: 10.28991/esj-2021-01270.Contribution Title (shortened if too long) 11
+[25] « Global Burden of Sickle Cell Anaemia in Children under Five, 2010–2050:
+Modelling Based on Demographics, Excess Mortality, and Interventions | PLOS
+Medicine », https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.1001484
+[26] M. Zhang, X. Li, M. Xu, et Q. Li, « Image Segmentation and Classification for
+Sickle Cell Disease using Deformable U-Net », 29 octobre 2017, arXiv: arXiv:1710.08149. doi: 10.48550/arXiv.1710.08149.
+[27] L. Alzubaidi, M. A. Fadhel, O. Al-Shamma, J. Zhang, et Y. Duan, « Deep Learning Models for Classification of Red Blood Cells in Microscopy Images to Aid
+in Sickle Cell Anemia Diagnosis », Electronics, vol. 9, no 3, Art. no 3, mars 2020,
+doi: 10.3390/electronics9030427.
+[28] « (PDF) Deep Convolutional Neural Network Model for Detection of Sickle Cell
+Anemia in Peripheral Blood Images », ResearchGate,https://www.researchgate.net/publication/359157502_Deep_Convolutional_Neural_Network_Model_for_Detection_of_Sickle_Cell_Anemia_in_Peripheral_Blood_Images
+[29] B. Sen, A. Ganesh, A. Bhan, et S. Dixit, « “Deep Learning based diagnosis of
+sickle cell anemia in human RBC” », in 2021 2nd International Conference on
+Intelligent Engineering and Management (ICIEM), avr. 2021, p. 526‑529. doi:
+10.1109/ICIEM51511.2021.9445293.
+[30] M. Bhatia et al., « A Novel Deep Learning based Model for Erythrocytes Classification and Quantification in Sickle Cell Disease », 2 mai 2023, arXiv:
+arXiv:2305.01663. doi: 10.48550/arXiv.2305.01663.
+[31] N. G. Goswami, A. Goswami, N. Sampathila, et G. M. Bairy, « Sickle Cell Classification Using Deep Learning », in 2023 3rd International Conference on Intelligent Technologies (CONIT), juin 2023, p. 1‑6. doi:
+10.1109/CONIT59222.2023.10205802.
+[32] N. G. Goswami, A. Goswami, N. Sampathila, et G. M. Bairy, « Sickle Cell Classification Using Deep Learning », in 2023 3rd International Conference on Intelligent Technologies (CONIT), juin 2023, p. 1‑6. doi:
+10.1109/CONIT59222.2023.10205802.
+[33] « (PDF) Deep Convolutional Neural Network Model for Detection of Sickle Cell
+Anemia in Peripheral Blood Images »,https://www.researchgate.net/publication/359157502_Deep_Convolutional_Neural_Network_Model_for_Detection_of_Sickle_Cell_Anemia_in_Peripheral_Blood_Images
+[34] M. Usman, T. Zia, et A. Tariq, « Analyzing Transfer Learning of Vision Transformers for Interpreting Chest Radiography », J Digit Imaging, vol. 35, no 6, p.
+1445‑1462, déc. 2022, doi: 10.1007/s10278-022-00666-z.
+[35] W. Liu et al., « PHTrans: Parallelly Aggregating Global and Local Representations for Medical Image Segmentation », in Medical Image Computing and Computer Assisted Intervention – MICCAI 2022, L. Wang, Q. Dou, P. T. Fletcher, S.
+Speidel, et S. Li, Éd., Cham: Springer Nature Switzerland, 2022, p. 235‑244. doi:
+10.1007/978-3-031-16443-9_23.
+[36] F. Shamshad et al., « Transformers in Medical Imaging: A Survey », 24 janvier
+2022, arXiv: arXiv:2201.09873. doi: 10.48550/arXiv.2201.09873.12 F. Author and S. Author
+[37] Z. Sun, H. Jiang, L. Ma, Z. Yu, et H. Xu, « Transformer Based Multi-view Network for Mammographic Image Classification », in Medical Image Computing
+and Computer Assisted Intervention – MICCAI 2022, L. Wang, Q. Dou, P. T.
+Fletcher, S. Speidel, et S. Li, Éd., Cham: Springer Nature Switzerland, 2022, p.
+46‑54. doi: 10.1007/978-3-031-16437-8_5.
+[38] J. Xu et al., « RemixFormer: A Transformer Model for Precision Skin Tumor
+Differential Diagnosis via Multi-modal Imaging and Non-imaging Data », in
+Medical Image Computing and Computer Assisted Intervention – MICCAI 2022,
+L. Wang, Q. Dou, P. T. Fletcher, S. Speidel, et S. Li, Éd., Cham: Springer Nature
+Switzerland, 2022, p. 624‑633. doi: 10.1007/978-3-031-16437-8_60.
+[39] J. Xu et al., « RemixFormer: A Transformer Model for Precision Skin Tumor
+Differential Diagnosis via Multi-modal Imaging and Non-imaging Data », in
+Medical Image Computing and Computer Assisted Intervention – MICCAI 2022,
+L. Wang, Q. Dou, P. T. Fletcher, S. Speidel, et S. Li, Éd., Cham: Springer Nature
+Switzerland, 2022, p. 624‑633. doi: 10.1007/978-3-031-16437-8_60.
+[40] S. Aladhadh, M. Alsanea, M. Aloraini, T. Khan, S. Habib, et M. Islam, « An
+Effective Skin Cancer Classification Mechanism via Medical Vision Transformer », Sensors, vol. 22, no 11, Art. no 11, janv. 2022, doi: 10.3390/s22114008.
+[41] F. Almalik, M. Yaqub, et K. Nandakumar, « Self-Ensembling Vision Transformer (SEViT) for Robust Medical Image Classification », in Medical Image
+Computing and Computer Assisted Intervention – MICCAI 2022, L. Wang, Q.
+Dou, P. T. Fletcher, S. Speidel, et S. Li, Éd., Cham: Springer Nature Switzerland,
+2022, p. 376‑386. doi: 10.1007/978-3-031-16437-8_36.
+[42] W. Liu et al., « PHTrans: Parallelly Aggregating Global and Local Representations for Medical Image Segmentation », in Medical Image Computing and Computer Assisted Intervention – MICCAI 2022, L. Wang, Q. Dou, P. T. Fletcher, S.
+Speidel, et S. Li, Éd., Cham: Springer Nature Switzerland, 2022, p. 235‑244. doi:
+10.1007/978-3-031-16443-9_23.
+[43] F. Yuan, Z. Zhang, et Z. Fang, « An effective CNN and Transformer complementary network for medical image segmentation », Pattern Recognition, vol.
+136, p. 109228, avr. 2023, doi: 10.1016/j.patcog.2022.109228.
+[44] O. N. Manzari, H. Ahmadabadi, H. Kashiani, S. B. Shokouhi, et A. Ayatollahi,
+« MedViT: A robust vision transformer for generalized medical image classification », Computers in Biology and Medicine, vol. 157, p. 106791, mai 2023,
+doi: 10.1016/j.compbiomed.2023.106791.
+[45] A. BALDÉ et A. Bassene, SKDrepaData-v2. Zenodo, 2025. doi: 10.5281/zenodo.15715474.
+[46] A. Balde et al., « Benchmarking Noise2Void: Superior Denoising of Medical
+Microscopic Images », in Medical Information Computing, U. Anazodo, N.
+Akash, M. Fuchs, C. Cintas, A. Crimi, T. Mutsvangwa, F. Dako, et W. Ogallo,
+Éd., Cham: Springer Nature Switzerland, 2025, p. 199‑210. doi: 10.1007/978-3-
+031-79103-1_21.
+[47] T.-Y. Lin, P. Goyal, R. Girshick, K. He, et P. Dollár, « Focal Loss for Dense
+Object Detection », 7 février 2018, arXiv: arXiv:1708.02002. doi:
+10.48550/arXiv.1708.02002.Contribution Title (shortened if too long) 13
+[48] R. R. Selvaraju, M. Cogswell, A. Das, R. Vedantam, D. Parikh, et D. Batra,
+« Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization », Int J Comput Vis, vol. 128, no 2, p. 336‑359, févr. 2020, doi:
+10.1007/s11263-019-01228-7.
+[49] « Welcome to Chromodiag ». Consulté le: 24 juin 2025. [En ligne]. Disponible
+sur: https://www.service.chromodiag.com/

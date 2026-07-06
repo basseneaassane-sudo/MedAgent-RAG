@@ -1,0 +1,612 @@
+XXX-X-XXXX-XXXX-X/XX/$XX.00 ©20XX IEEE
+DREPADetect: An Optimized YOLOv8 Model for
+High-Precision Detection of Sickle Cell
+1st Abdourahmane Balde
+Assane Seck University
+Ziguinchor, Sénégal
+a.b165@zig.univ.sn
+4th Youssou Faye
+Assane Seck University
+Ziguinchor, Sénégal
+yfaye@univ-zig.sn
+6th Mamadou Soumboundou
+Iba Der Thiam University
+Thies, Senegal
+mamadou.soumboundou@univ-thies.sn
+2nd Simon Schabat
+Cell Environment
+Évry-Courcouronnes, France
+simon.schabat@cell-environment.com
+5th Dieu-Donné Okalas Ossami
+University of Science and Technology
+of Masuku
+Franceville, Gabon
+dieudonne.okalas@univ-masuku.org
+7th Bruno Colicchio
+IRIMAS Laboratory, University of
+Haute Alsace
+Mulhouse, France
+bruno.colicchio@uha.fr
+3rd Avewe Bassene
+Cheikh Anta Diop University
+Dakar, Sénégal
+avewe.bassene@ucad.edu.sn
+6th Ousmane Sall
+Cheikh Hamidou Kane Digital
+University
+Dakar, Senegal
+ousmane1.sall@unchk.edu.sn
+8th Radhia M'kacher
+Cell Environment
+Évry-Courcouronnes, France
+radhia.mkacher@cell-environment.com
+Abstract— The detection of blood cells in patients with sickle
+cell disease represents a significant challenge in computer vision,
+primarily due to the cells' small size and tendency to overlap. In
+this study, we propose DREPADetect, an optimized detection
+model for blood cells, based on a modified YOLOv8
+architecture. To enhance accuracy for small objects, we
+streamlined the model by selectively removing blocks and layers
+dedicated to detecting medium and large-sized objects. This
+adaptation allows computational resources to focus on the
+morphological features specific to blood cells. We optimized the
+backbone and neck components of the model by reinforcing
+blocks specialized in high-resolution feature extraction, which is
+crucial for detecting small objects. This approach enables
+DREPADetect to minimize the influence of artifacts and offtarget elements in images, focusing attention on regions of
+interest (ROIs) corresponding to blood cells. Experimental
+results demonstrate that DREPADetect achieves superior
+performance compared to state-of-the-art models, with a
+precision of 87.6%, a recall of 87.6%, and a mean average
+precision (mAP@50) of 90.3% on a dedicated dataset of blood
+cells from sickle cell patients. These results outperform
+reference models such as YOLOv8 and derivatives. This study
+highlights the effectiveness of DREPADetect for the accurate
+detection of blood cells in a complex clinical context, offering
+promising prospects for automated medical image analysis in
+sickle cell disease.
+Keywords— YOLOv8, Blood, Diagnosis, Detection, Sickle Cell
+Disease.
+I. INTRODUCTION
+Sickle cell disease (SCD) is a group of hereditary disorders
+caused by a mutation in the beta-globin gene, where glutamic
+acid is replaced by valine at the sixth codon [1]. This mutation
+causes red blood cells to polymerize into rigid, sickle-shaped
+forms, impairing blood flow and leading to vaso-occlusion,
+stroke, acute chest syndrome, pulmonary hypertension, and
+leg ulcers [2].
+SCD affects around 300,000 newborns annually, with over
+80% of cases in Africa [3]. In Senegal, 10% of the population
+carries the gene, and 1,700 babies are born with SCD yearly.
+Projections estimate 14.2 million affected births by 2050 [4].
+Affordable, reliable diagnostic tools are vital, particularly
+in low-resource set-tings. Traditional blood smear analysis is
+limited by skilled labor dependency, manual errors, delays,
+and lack of advanced equipment [5]. Conventional methods
+(e.g., Watershed, Hough Transform) fail with overlapping
+cells and real-time integration, driving the adoption of deep
+learning models (CNNs, Faster R-CNN, YOLO) [6]. Yet,
+computational constraints hinder real-time deployment.
+To address these challenges, we propose DREPADetect,
+an optimized YOLOv8 model for sickle cell detection.
+Enhanced for small object detection, it focuses on distinctive
+features in blood smear images. Tested on datasets with varied
+cell configurations (including overlaps), our model
+outperforms YOLOv8 in accuracy and efficiency.
+The key contributions of our study are following; (1)
+Enhanced YOLOv8 for sickle cell detection, improving
+accuracy in complex diagnostic cases; (2) Optimized
+inference time, meeting real-time clinical constraints; (3)
+Developed ‘SKDrepaData’, an annotated dataset (100×
+magnification) to mitigate data scarcity; (4) Refined
+overlapping cell detection, ensuring precise morphological
+analysis; (5) Maintains high accuracy, even under imaging
+artifacts, resolution inconsistencies, and lighting variations;
+(6) Validated on multiple datasets (‘SKDrepaData’ and
+‘Erythrocyte IBD1’), proving robustness in low-resource
+environments.
+The remainder of this paper is structured as follows:
+Section II reviews related work. Section III details
+DREPADetect’s optimized architecture. Section IV covers
+experiments, followed by results and discussions in Section V.
+Section VI concludes with future directions.
+II. RELATED WORK
+Research on hematological disease diagnosis has
+advanced significantly, with AI-based approaches enhancing
+sickle cell detection through machine learning and deep
+learning models. Early methods relied on image segmentation
+and feature extraction but faced challenges in accuracy,
+overlapping cell detection, and real-time feasibility [7].Traditional techniques, such as Otsu’s thresholding and
+the Watershed algorithm, were used for feature extraction [8].
+While effective, they suffered from high error rates with
+overlapping cells and dependence on handcrafted features [9],
+[10], [11]. Methods like edge detection (Sobel filter) and
+circular Hough transform (CHT) struggled with noise and
+complex cell structures[10], [11], prompting the shift to deep
+learning [12].
+CNN-based models have gained prominence. Bhatia et
+al.[13] developed a custom CNN trained on 10,377 single-cell
+images, outperforming LightGBM, Inception V3, ResNet, and
+VGG. However, traditional CNNs remain computationally
+intensive and require large datasets for optimal performance.
+More recent works [14], [15], [16], [17] have leveraged
+YOLO and R-CNN-based object detection architectures for
+blood cell classification. John Paolo et al. [18] applied
+YOLOv3 for sickle cell diagnosis, achieving a 50%
+confidence score on a small dataset, highlighting YOLO’s
+potential but also its dataset dependency. Karunasena et al.
+[19] developed an R-CNN-based model, integrating CNN
+feature extraction and SVM classification, reaching 90%
+accuracy but with high computational costs unsuited for realtime practice on low-end CPUs.
+Faster R-CNN has been applied to anemia-related cell
+detection, with Haq et al. [20] achieving 91.83% accuracy for
+RBCs, 97.90% for WBCs, and 88.36% for plate-lets.
+However, it remains limited by inference delay, thus unsuited
+for real-time clinical use.
+Recent studies have optimized YOLO-based models for
+sickle cell detection. Wang et al. [21] used YOLOv7 with
+adaptive preprocessing, achieving mAP@50 scores of 80.2%
+and 81.9%. Zeyu et al. [22] propose YOLO-BC, an improved
+YOLOv8 variant, outperforming YOLOv8 with 80.9%
+accuracy, mAP@50 of 90.1, F1-score of 85%, and Recall of
+88.0%, demonstrating YOLOv8’s efficiency in hematological
+analysis.
+Despite advancements, existing models still face
+challenges with overlapping cells, computational efficiency,
+and real-time deployment. To address these limitations, we
+introduce DREPADetect, an optimized YOLOv8-based
+model tailored for sickle cell detection. By focusing on small
+object detection, reducing computational costs, and improving
+real-time inference, DREPADetect maintains high accuracy
+while overcoming key drawbacks of prior models.
+DREPADetect leverages elementary morphological
+structures, extracting features based on minimal cell diameter
+to effectively handle overlapping cells and feature extraction
+challenges. It outperforms state-of-the-art models by
+enhancing inference speed, enabling real-time decisionmaking, and addressing previous limitations making
+DREPADetect an efficient, accurate, and real-time diagnostic
+tool for SCD detection.
+III. PROPOSED METHODOLOGY
+Existing sickle cell detection methods struggle with realtime deployment and over-lapping erythrocyte identification;
+DREPADetect overcomes these challenges.
+By exploiting the dimensional uniformity of erythrocytes
+(~7–8 μm) and the fine details captured at high magnification
+(×40, ×100), DREPADetect accurately identifies subtle
+morphological features of sickle cells. High magnification
+imaging reveals intricate cell structures, essential for precise
+falciform shape detection.
+Thus, the key challenge lies in designing a deep learning
+model that focuses on these critical features while optimizing
+both detection accuracy and processing speed. The proposed
+Fig 1. An optimized proposed Architecture for DREPADetect.architecture (Fig 1.) enhances inference time and detection
+precision by prioritizing the most relevant morphological
+aspects.
+A. DREPADetect Architecture
+The DREPADetect architecture consists of three
+components: Backbone, Neck, and Head. The Backbone, as
+the core innovation for feature extraction, is the core
+innovation of this study. In YOLOv8, the Backbone processes
+640×640×3 input images through convolutional layers,
+reducing spatial resolution while extracting features. Given
+the dimensional consistency of sickle cells (~7–8μm) and the
+irrelevance of large receptive fields for detecting individual
+cells [23], our key improvement lies in removing unnecessary
+detection blocks.
+Rather than focusing on medium and large object
+detection, as in YOLOv8, DREPDetect retains only blocks
+optimized for small object detection, making it better suited
+for erythrocyte identification. Specifically, Conv 0, Conv 1,
+Conv 3, Conv 5, and C2f blocks are preserved, while Blocks
+7-8, 10-12, and 16-21—which target medium and large
+objects—are removed.
+Additionally, the Spatial Pyramid Pooling Fast (SPPF)
+module in the Backbone and the Contact and Upsample blocks
+in the Neck are retained to enhance feature extraction, fusion,
+and reconstruction, improving accuracy and efficiency. The
+Neck refines extracted features, which the Head then classifies
+and localizes. By streamlining YOLOv8, DREPADetect
+achieves higher speed and precision, making it an efficient
+sickle cell detection model suitable for resource-constrained
+clinical environments.
+IV. EXPERIMENTATION
+A. Data Collection and Preprocessing
+The experimental dataset consists of microscopic images
+from 20 SCD patients, collected at three sites: the UMRED
+Laboratory (University of Thiès), the Children's Hospital of
+Diamniadio (Senegal), and the Cell Environment Laboratory
+(Paris, France).
+The ‘SKDrepaData’ [24] dataset, captured using an optical
+microscope at 40× and 100× magnifications, consists of 619
+images. Annotation was performed using Labelme [25] with
+at least four hematology and biology experts, ensuring data
+quality and reliability. Images were categorized into Normal
+cells, Sickle cells, and other cell types, with their distinct
+morphological features illustrated in Fig 2. To enhance model
+generalization, variability and robustness, data augmentation
+techniques such as flipping, 90° rotations, random cropping
+(0–15%), and exposure adjustments (-20% to +20%) were
+applied. This increased the number of images to 1,487, which
+were split into 70% for training, 20% for validation, and 10%
+for testing.
+B. Experimental Setup and Evaluation Metrics
+Experiments were conducted with PyTorch 2.5.1 on an
+NVIDIA Tesla T4 GPU (15,102 MiB VRAM) with CUDA
+12.1 for accelerated computations. Training spanned 200
+epochs, with early stopping (patience = 100) to prevent
+overfitting while optimizing parameter exploration. A batch
+size of 12 balanced gradient stability and memory efficiency.
+The AdamW optimizer, known for its robust convergence,
+was used with an initial learning rate of 0.001, a decay factor
+of 0.1, and momentum of 0.9 to enhance stability.
+Model performance was evaluated using Precision (P),
+Recall (R), mean Average Precision (mAP), and FLOPs [26]
+(equation 1). mAP combines precision and recall, with
+mAP@50 reflecting precision at an IoU of 0.5, and mAP@50-
+95 averaging precision across IoU thresholds (0.5–0.95, in
+0.05 steps) for comprehensive evaluation. FLOPs quantify
+DREPADetect’s computational complexity, measuring
+floating point operations per second, providing a key indicator
+of efficiency and processing speed.
+𝑃 =
+𝑇𝑃
+𝑇𝑃 + 𝐹𝑃 ; 𝑅 =
+𝑇𝑃
+𝑇𝑃 + 𝐹𝑁 ; 𝑚𝐴𝑃 =
+1 𝑛
+∑ 𝐴𝑃𝑖
+𝑛
+𝑖=1
+(1)
+Fig 2. The three cell categories studied.
+V. RESULTS AND DISCUSSION
+A. Comparative Analysis of Model Performance
+DREPADetect’s performance is evaluated during training
+and validation, highlighting the impact of its structural
+optimizations. For a fair comparison, models were tested on
+‘SKDrepaData’ using identical hyperparameters.
+Performance metrics (precision, recall, mAP@50, mAP@50-
+95) are detailed in Fig. 3 and TABLE I.
+As shown in Fig 3., after 25 epochs, DREPADetect
+consistently outperforms YOLOv8 in Precision and mAP,
+achieving P = 86.0%, mAP@50 = 90.0%, and mAP@50-95
+≈ 64.1%, compared to YOLOv8’ s P = 84.5%, mAP@50 =
+89.4%, and mAP@50-95 ≈ 63.7%. However, YOLOv8
+exhibits higher Recall (R = 88.6%), compared to
+DREPADetect’s R = 87.6%, indicating that while
+DREPADetect improves precision and detection accuracy,
+YOLOv8 captures a broader range of sickle cells, albeit with
+a higher false positive rate. The comparative validation table
+(Table I.) further confirms benefits of DREPADetect
+optimizations over the baseline.
+DREPADetect achieves 87.6% overall precision,
+outperforming YOLOv8’s 84.6% by 3%. Additionally, it
+Fig 3. Comparison curves of P (a), R (b), mAP@50 (c) and
+mAP@50:95 (d) between models.exhibits superior mAP scores, with mAP@50 = 90.3% and
+mAP@50-95 = 64.6%, compared to YOLOv8’s 90.0% and
+64.5%, respectively.
+After extensive validation, DREPADetect demonstrates
+once again its ability to identify each class individually and
+outperforms YOLOv8 in overall processing efficiency. Visual
+proof of these results is presented in Section Erreur ! Source
+du renvoi introuvable..
+Considering hardware limitations in clinical
+environments, DREPADetect’s computational efficiency is
+evaluated in detail in the next subsection.
+DREPADetect outperforms YOLOv8 in sickle cell
+detection, achieving mAP@50 of 92.1%, compared to 91.6%
+for YOLOv8. Similarly, for normal cells, DREPA-Detect
+reaches 93.3%, surpassing YOLOv8’s 92.4%. However, for
+other cell types, YOLOv8 slightly outperforms
+DREPADetect, scoring 86.1% vs. 85.4%. These findings
+further validate the effectiveness of DREPADetect’s
+structural optimizations, enhancing detection accuracy and
+robustness.
+Table I. EXPERIMENTAL RESULTS OF ON THE
+VALIDATION DATASET
+Models Precision
+(%)
+Recall
+(%)
+mAP@50(
+%)
+mAP@50:9
+5(%)
+YOLOv8 84.6 88.8 90.0 64.5
+DREPADet
+ect 87.6 87.6 90.3 64.6
+B. Benchmarking Computational Efficiency
+The experimental results on computational efficiency,
+measured in GFLOPs, high-light DREPADetect’s superior
+resource management. The model significantly reduces
+computational complexity, requiring only 118.7 GFLOPs,
+compared to 164.8 GFLOPs for YOLOv8. Additionally,
+DREPADetect operates with 16,250,067 parameters, whereas
+YOLOv8 has 43,608,921, reflecting a 62.7% reduction in
+model size and a 28% decrease in computational demand for
+image processing.
+The proposed optimizations also reduce the model’s
+depth, with DREPADetect using 150 layers compared to 268
+in YOLOv8. Additionally, image processing time improves
+by at least 4 milliseconds, with DREPADetect achieving
+14.1ms per im-age, compared to 18.3ms for YOLOv8. These
+results confirm DREPADetect’s efficiency, ensuring high
+performance while reducing computational costs, making it
+better suited for real-time clinical applications.
+C. Discussion
+The experimental results confirm that DREPADetect,
+through architectural optimization, outperforms state-of-theart models. Its structural innovations, specifically tailored to
+this study, yielded highly satisfactory results across all
+evaluation stages.
+During training, as shown in Fig 3., DREPADetect
+demonstrates a faster and more efficient learning process than
+YOLOv8. This improvement stems from the drastic reduction
+of non-essential layers, allowing the model to focus on crucial
+detection features, particularly cell size. Additionally, data
+preprocessing techniques—including augmentation—
+enhanced generalization capability, with these optimizations
+also reflected in validation performance.
+In the validation phase, DREPADetect's optimized
+backbone and neck, designed for small object detection,
+enable the model to filter out irrelevant background elements
+and focus directly on target features. However, as shown in
+TABLE I, DREPA-Detect recorded a lower Recall (87.6%),
+likely due to the limited training data avail-able in this study.
+Recognizing the critical role of data quantity, we have made
+our annotated dataset publicly available to support further
+research in the scientific community.
+https://doi.org/10.5281/zenodo.14906626.
+In cell identification and detection, DREPADetect
+enhances computational efficiency by 28% compared to
+YOLOv8, reducing operations per second while achieving
+22.9% faster image processing. The model’s simplified
+structure—150 layers versus 268 in YOLOv8—significantly
+boosts execution speed. These computational optimizations
+make DREPADetect highly suitable for clinical applications,
+where real-time processing and efficiency are essential.
+D. Experimental Comparative of Models on the
+SKDrepaData Dataset
+DREPADetect demonstrates superior efficiency in sickle
+cell detection compared to recent models (TABLE II). While
+YOLOv7-tiny focuses on hypochromic microcytes (IDA) and
+AttriDet offers explainability but low performance (mAP =
+28.2%), both lack clinical validation. YOLO-BC achieves
+high precision (80.9% P, 88.9% R, mAP@50 = 90.1%) but is
+computationally intensive, hindering real-time use on low-end
+CPUs. YOLOv5-BS, optimized for speed, struggles with
+overlapping cells. Two stage models like R-CNN and Faster
+R-CNN provide >90% precision but suffer from slow
+inference and poor generalization. Custom Deep CNNs are
+noise-sensitive, and CST-YOLO, despite high recall (92.7%),
+is computationally demanding and untested on specific
+diseases.
+DREPADetect strikes an optimal balance, achieving
+87.6% precision, 87.6% recall, and 90.3% mAP@50. Tailored
+for sickle cell detection, it ensures real-time feasibility and
+suitability for low resource clinical settings. This study also
+introduces a new expert annotated dataset, enhancing
+reproducibility and clinical validation.
+Table II. COMPARATIVE EXPERIMENT WITH STAT-OF-THE-ART MODELS
+Models Datasets
+(Classes) P (%) R (%) mAP@50 Observations
+YOLOv7-tiny
+[16] Private (2) N/A N/A 89.0
+Specialized in hypochromic
+microcytes (IDA). No clinical
+validation.AttriDet [14] Private (14) N/A N/A 28.2
+High explainability - low
+performance. High computational
+consumption.
+YOLO-BC [22] Public (3) 80.9 88.9 90.1
+High precision and computational
+load. Unsuitable for real-time
+practice
+YOLOv5-BS
+[17] Public (3) 92.8 83.8 N/A Optimized for speed but limited
+handling of overlapping cells.
+R-CNN [19] Private (1) 91.0 N/A N/A Slow model and limited dataset. Poor
+generalization.
+Faster
+R-CNN [20] Public (3) 90.0 N/A N/A
+Good precision but high inference
+time. Not optimized for specific cell
+types.
+Custom Deep
+CNN [13] Private (3) 81.0 N/A N/A Sensitive to noise and overlapping
+cells. High computational load.
+CST-YOLO [15] Public (3) N/A 92.7 N/A
+High recall - very computationally
+intensive. Not tested on specific
+diseases.
+DREPADetect Public (3) 87.6 87.6 90.3
+Good accuracy/speed balance.
+Suitable for low-resource
+environments.
+E. Visual evaluation of DREPADetect on Test Data
+Fig 4. evaluates DREPADetect robustness across different
+conditions using test datasets images of both ‘SKDrepaData’
+and ‘Erythrocyte IBD1’ [28]. In row (a), corresponding to
+‘SKDrepaData’ images at 100× magnification, DREPADetect
+accurately detects well separated cells, correctly regressing
+bounding boxes with no missed detections. The model
+exhibits strong resilience to morphological variations and
+image noise, confidently classifying partially atypical cells
+into the appropriate ‘Other’ classes. In row (b), using
+‘Erythrocyte IBD1’ images at 40× magnification, the
+detection scenario becomes more challenging due to
+overlapping cells, blurriness, and occlusions. Despite smaller
+cell sizes, DREPADetect successfully detects and classifies
+the cells, demonstrating adaptability to complex imaging
+conditions. These findings highlight DREPADetect’s
+robustness in handling size variations, cell overlaps, and
+visual artifacts, further reinforcing its potential for clinical
+applications across diverse image quality levels and scales.
+VI. CONCLUSION AND FUTURE PERSPECTIVES
+We developed DREPADetect, an optimized YOLOv8-
+based method for blood cell detection and counting. Tailored
+for clinical use, it detects small-sized cells (normal, sickle, and
+others) while ensuring real-time performance for practical
+applications. Experimental results demonstrate that
+DREPADetect outperforms YOLOv8, achieving a precision
+of 87.6%, mAP@50 of 90.3%, and mAP@50-95 of 64.6%.
+Additionally, the model significantly reduces computational
+complexity, requiring 118.7 GFLOPs and 150 layers,
+compared to 164.8 GFLOPs and 268 layers for YOLOv8,
+thereby improving speed and efficiency while maintaining
+superior performance. A comparative analysis with other
+models, such as recent YOLO derivatives propositions and
+Faster R-CNN, confirms that DREPADetect delivers better
+overall performance in red blood cell detection, surpassing
+these models in terms of precision, recall, and mAP.
+Our future research will focus on: (1) Developing an
+integrated DREPADetect based system for sickle cell
+detection and counting, ensuring accessible diagnostics in
+remote areas of Senegal. (2) Expanding and releasing a public
+sickle cell dataset to mitigate data scarcity and advance
+hematological research. (3) Exploring federated learning to
+facilitate secure collaboration across medical centers,
+improving model performance and clinical adoption.
+ACKNOWLEDGMENT
+We would like to thank the Joint Research Unit for
+Diagnostics and Applications (UMRED), the Cell
+Environnement laboratory, and the biology laboratory of the
+Diamniadio Children’s Hospital (HED) for their support and
+collaboration in the collection and annotation of the data. We
+also express our deep gratitude to all the annotators and
+validators for the time and effort they dedicated to this work.
+REFERENCES
+[1] G. J. Kato et al., « Sickle cell disease », Nat. Rev. Dis.
+Primer, vol. 4, no 1, p. 1‑22, mars 2018, doi:
+10.1038/nrdp.2018.10.
+[2] R. E. Benesch, S. Kwong, et R. Benesch, « The effects
+of alpha chain mutations cis and trans to the beta6
+mutation on the polymerization of sickle cell
+Fig 4. Visual discrimination of RBC Detection on SKDrepaData
+(a) and Erythrocyte IBD1(b) Datasetshaemoglobin », Nature, vol. 299, no 5880, p. 231‑234,
+sept. 1982, doi: 10.1038/299231a0.
+[3] G. Salinas Cisneros et S. L. Thein, « Recent Advances
+in the Treatment of Sickle Cell Disease », Front.
+Physiol., vol. 11, mai 2020, doi:
+10.3389/fphys.2020.00435.
+[4] F. B. Piel, S. I. Hay, S. Gupta, D. J. Weatherall, et T.
+N. Williams, « Global burden of sickle cell anaemia in
+children under five, 2010-2050: modelling based on
+demographics, excess mortality, and interventions »,
+PLoS Med., vol. 10, no 7, p. e1001484, 2013, doi:
+10.1371/journal.pmed.1001484.
+[5] « Dépistage néonatal ciblé de la drépanocytose :
+limites du test de falciformation (test d’Emmel) dans le
+bilan prénatal en zone ouest africaine - EM consulte ».
+Consulté le: 28 avril 2025. [En ligne]. Disponible sur:
+https://www.emconsulte.com/article/1212353/depistage-neonatalcible-de-la-drepanocytose-limit
+[6] A. Balde, A. Bassene, L. Faty, M. Soumboundou, O.
+Sall, et Y. Faye, « Recent Artificial Intelligence
+Advances in Detection and Diagnosis of Sickle Cell
+Disease: A review », in 2023 IEEE International
+Conference on Big Data (BigData), déc. 2023, p.
+3650‑3659. doi:
+10.1109/BigData59044.2023.10386158.
+[7] M. Shahzad et al., « Blood cell image segmentation
+and classification: a systematic review », PeerJ
+Comput. Sci., vol. 10, p. e1813, févr. 2024, doi:
+10.7717/peerj-cs.1813.
+[8] B. Sen, A. Ganesh, A. Bhan, S. Dixit, et A. Goyal,
+« Machine learning based Diagnosis and Classification
+Of Sickle Cell Anemia in Human RBC », in 2021 Third
+International Conference on Intelligent
+Communication Technologies and Virtual Mobile
+Networks (ICICV), févr. 2021, p. 753‑758. doi:
+10.1109/ICICV50876.2021.9388610.
+[9] I. A. Chintawar, A. Mishra, P. Narnaware, et C.
+Kuhikar, « Detection of Sickle Cells using Image
+Processing », vol. 2, no 09.
+[10] M. Abdulraheem Fadhel, A. J. Humaidi, et S. R.
+Oleiwi, « Image processing-based diagnosis of sickle
+cell anemia in erythrocytes », in 2017 Annual
+Conference on New Trends in Information &
+Communications Technology Applications (NTICT),
+mars 2017, p. 203‑207. doi:
+10.1109/NTICT.2017.7976124.
+[11] A. S. Mohamad, R. Hamzah, A. S. Mokhtar, et J.
+Sathar, « Sickle cell disease verification via sobel edge
+algorithms for image processing », in 2017
+International Conference on Engineering Technology
+and Technopreneurship (ICE2T), sept. 2017, p. 1‑4.
+doi: 10.1109/ICE2T.2017.8215994.
+[12] « Deep Learning Models for Classification of Red
+Blood Cells in Microscopy Images to Aid in Sickle
+Cell Anemia Diagnosis ». Consulté le: 28 avril 2025.
+[En ligne]. Disponible sur:
+https://www.mdpi.com/2079-9292/9/3/427
+[13] M. Bhatia et al., « A Novel Deep Learning based
+Model for Erythrocytes Classification and
+Quantification in Sickle Cell Disease », 2 mai 2023,
+arXiv: arXiv:2305.01663. doi:
+10.48550/arXiv.2305.01663.
+[14] A. Rehman, T. Meraj, A. M. Minhas, A. Imran, M. Ali,
+et W. Sultani, « A Large-scale Multi Domain
+Leukemia Dataset for the White Blood Cells Detection
+with Morphological Attributes for Explainability », 17
+mai 2024, arXiv: arXiv:2405.10803. doi:
+10.48550/arXiv.2405.10803.
+[15] M. Kang, C.-M. Ting, F. F. Ting, et R. Phan, « CSTYOLO: A Novel Method for Blood Cell Detection
+Based on Improved YOLOv7 and CNN-Swin
+Transformer », 4 octobre 2024. doi:
+10.1109/ICIP51287.2024.10647618.
+[16] N. K. T, Verma ,Seemitr, Prasad ,Keerthana, et B. M.
+and Kumar Singh, « Efficient diagnostic model for
+iron deficiency anaemia detection: a comparison of
+CNN and object detection algorithms in peripheral
+blood smear images », Automatika, vol. 66, no 1, p.
+1‑15, janv. 2025, doi:
+10.1080/00051144.2024.2433868.
+[17] X. Song et H. Tang, « Blood Cell Target Detection
+Based on Improved YOLOv5 Algorithm »,
+Electronics, vol. 13, no 24, Art. no 24, janv. 2024, doi:
+10.3390/electronics13244992.
+[18] J. P. M. De Leon, J. M. V. B. Dayego, N. B. Linsangan,
+et R. A. Juanatas, « Detection of Sickle Cell Anemia in
+Blood Smear using YOLOv3 », in 2022 IEEE
+International Conference on Artificial Intelligence in
+Engineering and Technology (IICAIET), sept. 2022, p.
+1‑6. doi: 10.1109/IICAIET55139.2022.9936781.
+[19] G. M. K. B. Karunasena, H. M. K. K. M. B. Herath, H.
+D. N. S. Priyankara, et B. G. D. A. Madusanka,
+« Sickle Cell Disease Identification by Using Region
+with Convolutional Neural Networks (R-CNN) and
+Digital Image Processing », Sri Lankan J. Appl. Sci.,
+vol. 1, no 02, Art. no 02, févr. 2023.
+[20] I. ul Haq, S. Anwar, M. T. Khan, et U. Sadique, « An
+Intelligent Approach for Blood Cell Detection
+Employing Faster RCNN », Pak. J. Eng. Technol., vol.
+6, no 1, p. 1‑6, janv. 2023, doi: 10.51846/vol6iss1pp1-
+6.
+[21] Y. Wang, H. Wang, et Z. Xin, « Efficient Detection
+Model of Steel Strip Surface Defects Based on YOLOV7 », IEEE Access, vol. 10, p. 133936‑133944, 2022,
+doi: 10.1109/ACCESS.2022.3230894.
+[22] Z. Liu, D. Yuan, et G. Zhu, « Research on Blood Cell
+Detection and Counting Based on Yolo-Bc
+Algorithm », 8 janvier 2024, Social Science Research
+Network, Rochester, NY: 4676325. doi:
+10.2139/ssrn.4676325.
+[23] T. L. Nguyen, S. Pradeep, R. L. Judson-Torres, J. Reed,
+M. A. Teitell, et T. A. Zangle, « Quantitative Phase
+Imaging: Recent Advances and Expanding Potential in
+Biomedicine », ACS Nano, vol. 16, no 8, p.
+11516‑11544, août 2022, doi:
+10.1021/acsnano.1c11507.
+[24] « SKDrepaData ». Consulté le: 28 avril 2025. [En
+ligne]. Disponible sur:
+https://zenodo.org/records/14906626
+[25] B. C. Russell, A. Torralba, K. P. Murphy, et W. T.
+Freeman, « LabelMe: A Database and Web-Based
+Tool for Image Annotation », Int. J. Comput. Vis., vol.77, no 1, p. 157‑173, mai 2008, doi: 10.1007/s11263-
+007-0090-8.
+[26] R. Padilla, S. L. Netto, et E. A. B. da Silva, « A Survey
+on Performance Metrics for Object-Detection
+Algorithms », in 2020 International Conference on
+Systems, Signals and Image Processing (IWSSIP),
+juill. 2020, p. 237‑242. doi:
+10.1109/IWSSIP48289.2020.9145130.
+[27] « erythrocytesidb.uib.es ». Consulté le: 28 avril 2025.
+[En ligne]. Disponible sur:
+https://erythrocytesidb.uib.es/

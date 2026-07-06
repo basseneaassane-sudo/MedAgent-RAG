@@ -1,0 +1,1069 @@
+979-8-3503-2445-7/23/$31.00 ©2023 IEEE
+Recent Artificial Intelligence Advances in Detection
+and Diagnosis of Sickle Cell Disease: A review
+1st Abdourahmane Balde
+Assane Seck University
+Ziguinchor, Senegal
+a.b165@zig.univ.sn
+2nd Avewe Bassene
+Cheikh Anta Diop University
+Dakar, Senegal
+avewe.bassene@ucad.edu.sn
+3rd Lamine Faty
+Assane Seck University
+Ziguinchor, Senegal
+lamine.faty@univ-zig.sn
+4th Mamadou Soumboundou
+Iba Der Thiam University
+Thies, Senegal
+mamadou.soumboundou@univthies.sn
+5th Ousmane Sall
+Cheikh Hamidou Kane Digital
+University
+Dakar, Senegal
+ousmane1.sall@unchk.edu.sn
+6th Youssou Faye
+Assane Seck University
+Ziguinchor, Senegal
+yfaye@univ-zig.sn
+Abstract— Sickle cell anemia is a genetic disease characterized
+by a genuine alteration of hemoglobin that leads to the emergence
+of sickle-shaped red blood cells. The clinical diagnosis of sickle cell
+disease is based on blood analysis tests such as electrophoresis,
+chromatography and isoelectric focusing, blood count scanning or
+peripheral blood smears. These analyses aim to identify the
+presence of the hemoglobin S (HbS) in the sickle cell patient's
+blood. Nonetheless, these approaches face limitations linked to
+processing delays, substantial expenses, the need for specialized
+expertise, and inaccessibility in developing countries, where the
+prevalence of sickle cell disease is substantial. Thus, artificial
+intelligence techniques, including medical image segmentation and
+machine learning algorithms, offer innovative solutions to address
+these challenges. This paper gives an overview of recent advances
+related to image segmentation, feature extraction as well as
+classification approaches used in the detection and diagnosis of
+sickle cell disease. We introduced both computer vision
+techniques, machine learning and convolutional neural networks
+for sickle cell detection in microscopic images of blood smear. We
+discuss specific challenges related to segmentation methods while
+processing microscopic images containing overlapping cells. In
+addition, we examined challenges related to the robustness of
+convolutional neural network models used for feature extraction
+and then classification of sickle cells images. To conclude this
+paper, research prospects that can be explored in the future
+related to sickle cell detection in medical concerns are given.
+Keywords—sickle cell detection, segmentation, classification,
+convolutional neural network, diagnostic.
+I. INTRODUCTION
+Sickle cell disease (SCD) is a genetic disease that affects the
+hemoglobin present in red blood cells [1]. When a person has
+SCD, the hemoglobin beta-globin gene is altered and the red
+blood cells change shape and become sickle-shaped when
+deoxygenated [2]. Polymerization and sickling of red blood cells
+leads to permanent creation of cells called sickled cells [3]. This
+morphologic alteration triggers cell destruction and shortens
+their lifespan, leading to hemolytic anemia [4]. Symptoms
+associated with sickle cell disease include anemia, episodes of
+pain, hand and foot syndrome, increasing infections, failure to
+thrive, and vision problems [5]. These symptoms also call for
+several complications, including stroke, acute chest syndrome,
+pulmonary hypertension, leg ulcer [6].
+SCD is one of the most common and widespread hereditary
+hematological disorders in the world [7] with approximately
+300,000 babies that are born with sickle cell disease each year
+[8]. SCD exhibits a higher prevalence in Africa, ranging from
+10% to 40% [9]. In sub-Saharan Africa alone, it is estimated that
+approximately 75% to 80% of people are carriers of the sickle
+cell gene [9]. Regarding Senegal, about 10% of the population
+is affected by SCD and each year, approximatively 1,700 infants
+are delivered with the homozygous SS form [10]. Since 2006,
+the World Health Organization (WHO) has recognized sickle
+cell disease as a global public health problem [11].
+The main challenge in diagnosing sickle cell disease lies in
+the accurate detection and counting of sickle cells due to their
+varied shapes and tendency to overlap in microscopic images
+[12]. The traditional approach used by healthcare professionals
+to detect sickle cell disease involves manually inspecting blood
+smear samples from patients under a microscope. As described
+in [13]–[15], this process is time-consuming and can be prone to
+errors due to overlapping red blood cells during the observation
+process. In addition, it requires the presence of a qualified
+hematologist, which may be difficult to find in some areas
+affected by the disease.
+The use of artificial intelligence (AI) techniques, such as
+image processing methods and convolutional neural network
+models, offers fresh opportunities for enhancing sickle cell
+disease detection. These approaches are able to efficiently
+analyze microscopic images, including overlapping cells,
+allowing for more accurate detection and counting of sickle cells
+[16]. In recent years, AI has generated great enthusiasm inmedical research and has found numerous applications [17]. Due
+to enhanced computing power, vast data availability, and
+progress in machine learning, AI has become a valuable assistive
+technology in many fields, particularly in medical imaging [18].
+Work has been conducted in the field of healthcare to highlight
+the positive impacts of using AI on the diagnosis, prevention,
+and treatment of various diseases [19]. The AI techniques are
+increasingly integrated into clinical diagnosis and treatment of
+hematological diseases, including sickle cell disease [20].
+This review aims to explore AI techniques that emphasis
+image segmentation methods and machine learning algorithms,
+to precisely detect and diagnose SCD using microscopic images
+of affected patients. In addition, we highlight the performance
+limitations of these computer-based approaches when it comes
+to SCD detection.
+The rest of the paper is organized as follows. Section 2
+provides a state-of-the-art examination of recent artificial
+intelligence methods for sickle cell disease diagnosis. Current
+challenges identified in sickle cell disease detection are
+presented in Section 3. Finally, section 4 summarizes the paper
+and gives avenues of research to explore in perspective.
+II. ARTIFICIAL INTELLIGENCE METHODS FOR DETECTING
+SICKLE CELL DISEASE
+Fig. 1. Microscopic blood sample image of a patient with
+sickle cell disease
+The traditional approach of identifying and counting sickle
+cells used in healthcare concerning diagnosing SCD is timeconsuming, expensive and requires the intervention of a
+specialized physician. A tedious task that calls for several
+propositions based on AI techniques that aim to improve the
+manual processes of diagnosing SCD. The sickle cell disease
+detection methods based on AI techniques can be grouped into
+three categories: image segmentation and feature extraction
+methods, classification methods based on machine learning
+algorithms, and deep learning (DL) based SCD detection. This
+section reviews works related to SCD in the scientific literature.
+It provides an overview of recent studies and advances in the
+medical field, it highlights the strengths and weaknesses of each
+SCD detection method using microscopic images. All proposals
+abstracted in this paper are widely based on the analysis of
+datasets containing microscopic images of patients with SCD,
+as illustrated in Fig. 1. In Fig. 1., we can observe the shape and
+arrangement of blood cells used to train AI algorithms to detect
+and diagnose SCD.
+The state-of-the-art reviews were conducted using Google
+Scholar to identify primary literature in sickle cell disease
+detection. The proposals published from 2015 were included in
+these papers, without any language restrictions. In addition,
+databases were also integrated into the exploration strategy,
+including PubMed, Scopus, ArXiv, Embase. The following
+terms were used as keywords: artificial intelligence, machine
+learning, deep learning, convolutional neural networks, image
+segmentation, feature extraction, sickle cell disease, red blood
+cell, hematology, diagnosis, detection, classification.
+The selected papers were chosen based on criteria related to:
+• the publication date of the paper (the latest from
+2015)
+• the used artificial intelligence approaches (image
+segmentation, features extraction)
+• the metrics used to evaluate the paper in terms of
+performance (accuracy, sensitivity, execution
+time)
+• the usefulness of the proposed method when it
+comes to diagnosis and treatment of sickle cell
+disease
+A. Segmentation and Feature Extraction Methods
+Detecting and counting sickle cells in blood smear
+microscopic images is challenging for sickle cell disease
+diagnosis due to their varied shapes and potential overlap in the
+images. The methods used by healthcare professionals to
+identify and count cells have several limitations. To automate
+this process with improvement in accuracy, various image
+segmentation and feature extraction techniques have been
+applied to diagnose SCD. This part focuses on image
+segmentation and features extraction methods that have been
+used on blood smear microscopic images.
+Menika et al. [21] proposed a method to detect and count
+sickle cells using image processing techniques and fractal
+dimension. The first step in this method was to collect blood
+smear images using a camera connected to a microscope. Then,
+a preprocessing step was undertaken, consisting of applying a
+median filter to the original images in order to reduce noise.
+After that, the red blood cells are segmented through edge
+detection algorithm and K-means algorithm to identify normal
+cells and sickled cells. The shape features of sickle cells are
+extracted based on their fractal dimensions to distinguish them
+from other cell shapes. In a final step, bounding boxes are used
+to detect and count sickle cells present in the image. This study
+shows that the image segmentation techniques used as well as
+the fractal dimension provide good results for the detection and
+counting of sickle cells. However, the edge detection algorithm
+is less effective in dealing with overlapping cells.
+Chintawar et al. [22] proposed an image processing
+technique involving denoising and segmentation to discern the
+shape and size of red blood cells in sickle cell patients' blood.
+This method makes it possible to identify and quantify sickle
+cells among the 12 types of cells examined in the blood of a
+sickle cell patient. The proposed workflow consists of first
+acquiring microscopic images in RGB format from sickle cellpatients. This collection step is followed by the preprocessing
+step, where the original images are converted to grayscale. The
+grayscale images are filtered to attenuate impulse noise. Then,
+the edge detection algorithm is used to segment the cells in these
+images. This segmentation technique helps to define the
+boundaries of each cell so that cell borders, structures and
+contours are distinguished in the image. Finally, features such as
+circularity and color combined with the number of cells for each
+type are calculated. This framework can identify and assess the
+percentage of each cell type by considering the distinctive
+features of each type among the 12 cell types under scrutiny.
+However, the drawback was that the method is unable to deal
+with overlapping cells efficiently and the number of features
+used to categorize a cell is limited.
+Abduraheem et al. [23] use two segmentation algorithms,
+such as Circular Hough Transform (CHT) and Watershed
+algorithm to automatically detect sickle cell disease. Both
+algorithms were implemented to extract circularity features from
+cells and determine the shape of overlapped cells in the images.
+A dataset of 233 microscopic images from sickle cell patients
+was used in this study. The CHT algorithm was more efficient
+when it comes to computing delay to distinguish normal cells
+from sickle cells in images. It requires a processing time of 8.71
+seconds to classify cell types, while the Watershed algorithm
+takes 11.74 seconds to perform the same task. These methods
+were suggested for automating sickle cell disease diagnosis, and
+the findings demonstrate their significant potential for
+hematologists.
+Sharma et al. [24] proposed a segmentation and feature
+extraction method with the aim of distinguishing normal cells,
+sickle cells, dracocytes and ovalycytes using the watershed
+segmentation algorithm. They collected 100 sample images of
+blood cells in which four classes weree identified. The quality of
+the acquired blood smear microscopic images is first improved
+by the median filter algorithm. The watershed algorithm is then
+used to segment cells and extract morphological features, such
+as the metric value, aspect ratio and radial signature of each cell.
+Thus, extracted features are subjected to the KNN classifier to
+distinguish the four cell types, which had an accuracy of 80.6%.
+This method has the advantage of detecting cell types other than
+sickle cells. However, the Watershed algorithm requires more
+computation time because it requires filling at in all local minima
+in the image to effectively separate overlapping cells.
+Bheem et al. [25] proposed a method that involves image
+preprocessing, segmentation, feature extraction and
+classification of red blood cells in order to diagnose SCD. In the
+preprocessing phase, RGB images from the erythrocyte IDB1
+[26] dataset are converted to grayscale, and the median filter is
+utilized to eliminate noise and enhance image quality. In the
+segmentation step, the authors first used Otsu thresholding to
+separate the cell type from the rest of the image. Then, we
+employed the Watershed segmentation algorithm to separate
+overlapping cells and assign labels to each cell type.
+Morphological closing eliminates undesired objects in
+segmented images. Following this, cell features, encompassing
+geometric and statistical attributes, are extracted, including
+circularity, aspect ratio, eccentricity, Standard Deviation,
+Variance, Entropy, and energy. Finally, the extracted features
+are fed into classifiers for the classification of the three cell
+types. The RF classifier exhibited 92% accuracy in classifying
+the three cell types using morphological features, surpassing
+SVM, RF, and RL algorithms. This study demonstrates that
+combining Otsu thresholding and the Watershed algorithm
+efficiently handles overlapping cells, enabling the extraction of
+additional cell properties. However, the Watershed algorithm
+requires a significant amount of computing time to effectively
+separate overlapped cells, which makes this method expensive.
+In the work of Mohamed et al. [26], the Sobel filter is used
+to extract the shape of globules and determine whether the
+diameter of a cell is less than 0.8um. The aim of this research is
+to identify and differentiate between sickle cells and normal
+cells. This approach has proven highly valuable, especially in
+remote areas with limited medical access. However, it does not
+specifically address the segmentation of overlapping cells,
+potentially leading to incorrect detections.
+B. Classification Methods Based on Machine Learning
+Algorithms
+The morphological features extracted from the blood cells
+were used to classify sickle cells and other cell types in the
+microscopic images using algorithms such as KNN (k-nearest
+neighbors), SVM (support vector machine), NB (naive Bayes),
+RL (logistic regression), DT (decision tree) deep learning
+algorithms. Most of the extracted features from red blood cells
+consist of the cell ratio aspect, circularity, entropy, variance,
+eccentricity. These quantitative features then serve as an input
+to classification algorithms to detect sickle cells and distinguish
+them from other forms of red blood cells. This approach which
+fuses image segmentation techniques and classification
+algorithms, was used to effectively detect and classify SCD
+with good performance. Sharma et al. [24] used the KNN
+classifier to classify sickle cells, dracocytes, ovalocytes, and
+healthy erythrocytes using the aspect ratio metric values and
+radial signature of each cell as input variables. It achieves a
+classification accuracy of 80.6% and a sensitivity of 86.4%. The
+results show the KNN used is able to preserve cell information
+in the learning phase. However, the KNN classifier requires
+enormous computing time for large datasets and it is very
+sensitive to outliers.
+Sagar Yeruva et al. [27] compare SVM, KNN, RL and RF
+classifiers accuracy while proposing a framework that classifies
+SCD. The authors develop classifiers to dissociate sickle cells
+from normal and thalassemia cells. They collected 1387 files of
+sickle cell patients. Based on collected data, 13 features are
+identified to train the classifiers. The SVM, KNN, RL and RF
+classifiers had accuracies of 76%, 77%, 78%, 95% and 98%
+respectively. The results show that the RF algorithm achieves
+the best prediction accuracy in detecting sickle cell disease.
+However, the performance of the SVM and KNN algorithm is
+not optimal when applied to the test data.
+Bheem Sen et al. [25] used four machine learning
+algorithms to classify normal cells, sickle cells, and other cell
+types of cells using features extracted from each type. Variables
+used to train the classifiers include circularity, aspect ratio,
+eccentricity, deviation, variance, entropy, and energy. The
+objective of this research is to create a system that can
+effectively recognize and categorize red blood cells, even when
+they are superimposed. After training the algorithms, resultsshowed that RF obtained the best performance with an accuracy
+of 92%. The Naïf Bayes (NB) algorithm obtains the lowest
+precision with 88%. We also see that the RF adapts better to the
+training data, recording sensitivity rates of 95%, 92% and 91%
+in class 1, 2 and 3, respectively.
+Alagus et al. [28] proposed a method for early identification
+of sickle cell disease based on the Inception V3 model and the
+SVM and KNN classifier from blood smear microscopic
+images. The aim of this method is to facilitate the diagnosis of
+sickle cell disease, particularly in children and women. The
+images used in this study are collected from the public
+“erythrocytes IDB”[29] database. The Inception V3 image
+recognition model is used to extract features of normal cells and
+sickle cells from images. The MO-BGWO optimization
+algorithm is used to select relevant features. Then, KNN and
+SVM classifiers are used to classify normal cells and sickle cells
+based on the extracted features. Results give an accuracy of
+99% and a sensitivity of 98%. The results of this study could
+contribute to the early detection of sickle cell disease and
+prevent possible serious complications.
+Multilayer perceptron (MLP) was included in the work of
+Yeruva et al. [30] for the diagnosis of sickle cell disease. This
+model was subjected to validation which showed 99% accuracy
+when classifying normal, sickle and thalassemia cells on the
+validation dataset. The performance of the MLP classifier was
+then compared to that of the SVM, KNN, RL, and RF classifiers
+to evaluate the relative performance of each algorithm.
+C. Extraction and Classification Methods BbBased on Deep
+Learning
+Recent work has mainly focused on the use of deep learning
+for efficient detection of sickle cells. DL techniques are used for
+both feature extraction and classification of red blood cells from
+blood smear microscopic images. The DL methods such as
+convolutional neural networks and recurrent neural networks
+have been shown to be very effective in extracting and
+accurately classifying sickle cell disease medical images.
+Mengjia Xu et al. [31] proposed a method based on
+convolutional neural networks to classify red blood cells into
+eight classes, namely discocytes, echinocytes, elongated,
+granular, ovalocytes, reticulocytes, drepanocytes and
+stomatocytes. In this study, the authors first extracted patches of
+globules from different categories in the microscopic images.
+The sizes of the extracted patches are normalized or a mask
+image for each class is generated at the output. Then, a
+convolutional neural network is created to classify the blood
+cells. I the last step of this work, the authors analyzed the shape
+factor of each type of red blood cell in order to evaluate the shape
+parameters of the studied classes. This method gives an accuracy
+of 87.50% and an area under the ROC curve (AUC) of 0.94.
+However, it is important to note that to achieve even better
+results, this method would require more precise segmentation
+and training on a larger dataset.
+Mo Zhang et al. [32] implemented a method for
+simultaneous segmentation and classification of red blood cells
+based on the U-Net architecture with the introduction of
+deformable layers. This method aims to segment the blood cells
+and classify them into three types: normal cells, sickle cells and
+other types of cells. This method is able to efficiently segment
+cells present in shaded areas of microscopic images. The results
+showed that the proposed model is able to classify cells with
+99% accuracy. The comparative evaluation also showed that this
+method outperformed the standard U-Net approach and region
+growing method in terms of semantic segmentation of sickle
+cells. However, a noteworthy constraint in this work is the small
+size of the training dataset used to train the model.
+Alzubaidi et al. [33] proposed three deep learning models to
+detect sickle cells from blood smear microscopic images. In this
+study, the authors used a dataset consisting of 626 blood smear
+images divided into three classes: 202 images of normal cells,
+211 of sickle cells and 213 images composed of other cell
+shapes. To address the issue of insufficient data, the authors
+employed data augmentation techniques (flip, luminosity) and
+transfer learning. The training model achieved a classification
+accuracy of 99.98%.
+In the study by B. Sen et al. [34], five pre-trained models
+such as ResNet50, ResNet101, VGG16, VGG19, InceptionV3
+were used to classify red blood cells into three categories:
+normal cells, sickle cells and other cells types. The images used
+in this method are collected from the erythrocyteIdb1[29]
+dataset. Flipping data augmentation techniques were used to
+enrich the training samples. From the results obtained, the
+Inceptionv3 model obtains the best performance with a
+classification accuracy of 91%, surpassing the ResNet50,
+ResNet101, VGG16 and VGG19 models. We note that ResNet
+and VGG require more training data to better classify cells than
+InceptionV3, which explains their relatively low performance.
+Another broader method of diagnosing hematological
+diseases in order to improve patient care was proposed by
+Karagül et al. [35]. The authors used convolutional neural
+networks to classify 14 types of anemia. Around 1477 files of
+patients diagnosed with anemic disorders were used in this
+experiment. The Convolutional neural network (CNN) model
+had an overall accuracy of 84.63% after 100 epochs.
+Emmanuel G. Dada et al. [36] used deep learning techniques
+to classify a patient's red blood cells into normal, sickle, and
+neonatal cells. This study aims to lower the expenses associated
+with sickle cell disease diagnosis by presenting a more costefficient approach. In this endeavor, five models built upon CNN
+architecture were tested to identify sickle cell disease in
+microscopic blood smear images. Using the applied data
+augmentation techniques, the PCNN-15 and DAPN-48 models
+achieved 99% and 100% accuracy ahead of the PCNN-48, VGG
+19 and RestNet-50 models, respectively. Depending on the
+geographical locale in which this investigation is undertaken, the
+outcomes could wield substantial influence on the timely
+detection of sickle cell disease and subsequently curtail the
+financial resources earmarked for its therapeutic intervention.
+P. Balamanikandan and al. [37] introduced an approach that
+relies on mathematical modeling involving quantum graph
+theory and a Long Short-Term Memory (LSTM) neural network
+for discriminating between sickle cells and normal cells. This
+technique aims to decrease the processing time and decisionmaking errors associated with the identification of sickle cell
+disease in patients. The process starts with the use of a DNA
+(Deoxyribonucleic Acid) sequence as input. The quantum graphtheory model is used to extract the characteristics of the elastic
+properties of each sequence. A set of eight features is extracted,
+and a spanning tree is generated to calculate the relational values.
+Then, the LSTM neural network is used to classify normal cells
+and sickle cells. The proposed DL model achieved a
+classification accuracy of 99.12%, endorsing the model's
+effectiveness.
+Recent research findings show that DL models provide better
+performance when it comes to blood cell detection and
+classification tasks. [38].
+Karunasena et al. [39] proposed a method for detecting sickle
+cell cells based on the Region-based Convolutional Neural
+Network (R-CNN) architecture. The given R-CNN architecture
+comprises two stages, including a feature extraction step and a
+classification step. CNN is applied for the extraction of relevant
+features from sickle cells. Subsequently, the features extracted
+from each region are fed into the SVM classifier to ascertain the
+object's class to which that region pertains. In addition,
+coordinates are estimated to enclose the object within the
+detected region using a bounding box. In this approach, 150
+sample blood smear images were used to train the CNN model.
+The results indicated that the R-CNN network achieved 95.2%
+accuracy in sickle cell detection.
+Ihtisham et al. [40] developed a model that uses
+convolutional neural networks, i.e. Faster R-CNN, to detect and
+categorize blood cells through microscopic images. This
+approach aims to automate the process of diagnosing
+hematological diseases that affect blood cells. The proposed
+model includes four steps: producing blood smears, collecting
+microscopic blood smears, labelling images and training the
+faster R-CNN model. The model is trained on annotated images
+to predict three classes of cells by delimiting each one with a
+bounding box. This method was compared with the manual SCD
+diagnostic approach to evaluate its performance. According to
+the results, the proposed model reaches up to 91.83%.
+Maxime Darrin et al. [41] proposed a hybrid framework that
+incorporates convolutional and recurrent neural networks
+(RNN) layers to analyze video sequences of unbalanced red
+blood cells in sickle cell disease patients. The video sequences
+used were captured using a microscope and each video included
+between 6 and 100 images. This hybrids model provides an
+accuracy of 97%. The authors suggest that this research could be
+advantageous for monitoring the health status of SCD patients.
+Goswani et al. [42] proposed an AI method with the goal of
+enhancing the manual identification and classification of sickle
+cells. The proposed method relies on using the ResNet50 deep
+learning model to accurately detect and categorize sickle cells
+within microscopic images derived from blood samples of
+patients with sickle cell disease. The trained ResNet50 model
+achieved an impressive accuracy of 93.88% on the tested
+dataset.
+A comparative study was conducted by Kawuma Simon et
+al. [38] to assess the accuracy and performance of the pre-trained
+models employed in sickle cell disease detection. Experimental
+tests are based on five pre-trained models including VGG16,
+VGG19, Inception V3, RestNet50 and ReNet. All these models
+were evaluated on the same dataset to classify normal cells and
+sickle cells from a microscopic image of a blood smear. The
+results show that the Inception V3 model is more suitable for the
+classification of sickle cells, and it obtains an accuracy of 100%
+ahead of the VGG16, VGG19, ResNet and ReNet models with
+an accuracy of 99%, 97%, 82 and 67%, respectively. We can see
+that the inceptionV3, VGG16, and VGG19 models yield good
+results, even though the performance has improved due to the
+increase in the number of filters. On the other hand, ResNet50
+and ReNet models require more training data to learn more from
+extracted features. The performance of the ResNet50 and ReNet
+models could be improved by using a larger sickle cell dataset.
+Niksa Praljak et al. [43] use deep learning to automate the
+sickle cell counting process to facilitate the analysis of
+microfluidic biomarker assay data. The given model was trained
+on 107 images of microfluidic biomarkers from patients with
+sickle cell disease. The model achieved an average uncertainty
+of 3%, assessed through accuracy metrics on the test dataset.
+Another recent study, using the U-Net model, was proposed
+by Yasheng Chen et al. [44] for the detection of modular lesions
+in children and young adults with sickle cell disease. The U-Net
+model was trained on brain magnetic resonance images (MRI)
+from these two categories of patients. The U-Net model predicts
+the presence of a lesion with a sensitivity of 100% and an
+accuracy of 74%. This study is conducted to facilitate the clinical
+diagnosis of modular lesions.
+Bhatia et al. [45] propose a new method based on a
+personalized neural network to classify discocytes cells,
+ovalocyte cells and sickle cells from microscopic images from
+patients with sickle cell disease. Of the 428 microscopic images
+collected, a dataset of 10,377 single-cell images was generated,
+on which the model was trained. In this study, the model
+achieved an accuracy of 81%. After comparison with the
+LightGBM classifier, Inception V3, ResNet, VGG6-16, VGG-
+19, ResNet-50, Fine-Tuned, DenseNet-121 and EfficientNetB0
+models, the proposed model obtained the best accuracy.
+Detection and classification of red blood cells from
+microscopic images are crucial steps in the automatic diagnosis
+of sickle cell disease. TABLE 1 highlights the performance,
+advantages and limitations of some methods detailed above and
+used by different researchers for the diagnosis of sickle cell
+disease. In table 1, we summarize the studies carried out over the
+last five years, which emphasis recent proposals related to the
+detection and diagnosis of SCD. This table illustrates recent
+advancements in enhancing sickle cell detection via image
+segmentation, machine learning, and deep learning techniques.
+It also underscores the constraints associated with each
+approach.
+In addition to the research summarized in this paper, TABLE
+1 provides a non-comprehensive compilation of notable studies
+underscoring the significance of advancements in sickle cell
+disease diagnosis facilitated by artificial intelligence techniques.
+The methods used by each author, the expectations in terms of
+performance and the limits of each of these studies are well
+described in TABLE 1. These various factors expedite our
+ability to draw perspectives for our future research.
+These limitations should motivate researchers to enhance
+current methods and suggest systems for integration into thesickle cell disease diagnosis process. Some of these limitations
+targeted here are widely discussed in section III and include the
+morphological variability of sickle cells, the quality of
+microscopic images, the treatment of overlapped cells, the lack
+of clinical dataset, and the clinical validation of data labeling
+process.
+Besides reviewed proposals limitations, we propose paths to
+explore future research topics that address challenges around
+formulating effective strategies to address cell overlap in
+images, the limited access to comprehensive annotated datasets
+for researchers, and the integration of AI models into medical
+concerns when it comes to sickle cell disease diagnosis.
+TABLE I. PERFORMANCE, STRENGTHS, WEAKNESSES OF REVIEWED SICKLE CELL DETECTION METHODS
+Years Methods Performances Strenghts Weaknesses
+2015 Segmentation using
+K-means [21]
+Allow good detection and count
+of sickle cells
+Significant time reduction in features
+extraction stage when training DL
+algorithms
+Not taking into account
+overlapped cells in the sickle cells
+identification stage
+2016
+GrayScale, edge
+detection algorithm
+[22]
+Enable to accurately count the
+percentage of cells on blood
+smear image
+Good refining ability to highlight
+cell shape and edge from blood cell
+image
+Unable to process overlapping
+cells.
+2016
+Watershed
+segmentation
+algorithm, KNN [24]
+Detect blood cells with an
+accuracy of 80.6% and a
+sensitivity of 87.2%
+Efficient to properly classify SCD
+Fairly number of considered
+features when training the
+algorithm
+2017 CHT and Watershed
+algorithm [23]. Optimum execution time
+Significant time reduction in features
+extraction stage when training IA
+models
+Liable to lead to a false diagnosis
+due to presence of leucocyte in
+blood smear
+2017 SCD detection using
+CNN [31]
+Allow SCD classification with an
+accuracy of 89.2% and an
+average AUC value of 0.97%
+Make robustness in features
+extraction and classification in SCD
+diagnosis steps
+Luck of accuracy when
+overlapped cells. Any information
+about the SCD stage
+2017 Deformable U-Net
+[32]
+High accuracy performance of
+99% when classifying singleclass red blood cells
+Recommended to reduce noise on
+image, fixed heterogeneous shapes
+and overlapped cells
+Does not access the number of
+cells which has a significant rule
+in SCD diagnosis
+2020 CNN, transfer
+learning [33] Accuracies up to 99%
+Exhibit data augmentation and
+transfer learning strength to improve
+sickle cells classification
+No pre-processing is done on the
+images before the feature
+extraction step and classification
+2020 CNN, RestNet50
+[43]
+Robust detection ability even
+with poor images conditions
+Better sensitivity in contrast to
+manual diagnostic method
+Rely on a manually labeled
+training dataset, which can
+require considerable effort in
+terms of time and human
+resources
+2021 SVM, KNN, RL, DT
+and RF [27]
+RF outperform with accuracy
+result near 96% when it comes to
+SCD detection
+Highly recommended for good
+precision when it comes to detect
+blood disorder including thalassemia
+The classes on which the
+algorithms are trained are
+unbalanced, which can lead to an
+overfitting problem
+2021 Classifier MLP [30] High SCD prediction accuracy of
+99% Efficient to properly classify SCD Give any information about the
+disease status
+2021 Inceptionv3, ResNet
+and VGG [34]
+Inception V3 91% outperform
+with prediction accuracy of 91%
+Significantly reduce SCD diagnostic
+processing time
+Give any information about the
+disease status
+2021 RF, SVM, RL, NB
+[25]
+RF reaches better performance
+with 92% of prediction accuracy
+when classifying cells
+Strong ability to accurately identify
+cells type from blood smear image
+Any comparison with similar
+image segmentation methods to
+validate its performance
+2021 CNN-based SCD
+deection [35]
+Good prediction accuracy of
+84.63%
+Good prediction while managing
+various types of anemia from blood
+smear image
+Any information about a potential
+anemic disorder
+2023
+VGG19, RESNET-
+50, PCNN-15,
+PCNN-48 and
+DAPN-48 [36]
+PCNN-15 and DAPN-48 give
+high average accuracy of 99.92%
+in SCD detection
+Boost efficiency to discern between
+normal, neonatal and sickle cells
+Any information about the type
+and the stage of the disease
+2023 Quantum graph
+theory, LSTM [37] Good accuracy rate up to 99.12% Improve LSTM performances when
+dealing with features elasticity
+Precision can be improved.
+High computing and memory cost
+2023 CNN and RNN [41] Accuracy of 97% when
+identifying sickle cells
+Efficient identification ability to
+analyze noisy microscopic cell
+images from video sequences
+2023 Inceptionv3, KNN
+and SVM [28]
+Good performances score related
+to precision, accuracy,
+sensitivity, specificity and F1
+score of 99%, 98%, 99%, 98%
+and 96% respectively
+Good effectiveness to discriminate
+normal cells to sickle cells from
+blood smear
+May need image processing step
+to improve performance
+2023 SCD detection using
+R-CNN [39]
+Good average accuracy of
+95.20% with low error rate 0.5%
+Good sensibility in sickle cells
+identification ability among others
+cells.
+Can improve accuracy when help
+RCNN algorithm to process
+nested cells in the image
+2023 Faster RCNN [40]
+Suitable for hematological
+diseases diagnosis with accuracy
+near to 91.83%
+Fit for hematological diseases
+diagnosis
+Unable to effectively detect
+nested cells
+2023 ResNet50 [42]
+Good detection ability of 93.88%
+when it comes to detect sickle
+cells
+Give highly contribution that help to
+process overlapped cells
+Used dataset is restricted in size
+and diversity, which can
+potentially affect model
+sensitivity
+2023
+VGG16, VGG19,
+InceptionV3, ResNet
+and ReNet [38]
+InceptionV3 gives efficient SCD
+detection with an accuracy of
+97.3%
+Give significant in using deep
+learning methods for the detection of
+sickle cells
+
+2023 U-Net-based SCD
+detection [44]
+U-Net showed 100% sensitivity
+in predicting the presence of
+SCD with an accuracy of 74%
+Ability to identify with low error the
+spinal cord lesions in children and
+young with SCD
+Although he recorded high
+sensitivity, its low accuracy can
+lead to a notable false positive
+decision
+2023
+Custom Deep CNN
+[45]
+Custom Deep CNN outperform
+with an accuracy of 81% when
+classifying various erythrocyte
+morphologies
+Strong ability to accurately classify
+various blood cells, even with
+overlapping sickle cell
+Luck of diversity in dataset
+samples could affect the model's
+ability to handle broader
+morphological variations.
+Model need to be validated with a
+real-world clinical setting to
+evaluate its reliability in SCD
+diagnosis
+III. DISCUSSION
+The detection and accurate classification of sickle cells in
+red blood cells is a difficult job in diagnosis due to the variety
+and arrangement of cells in microscopic images. This study
+shows that the application of image processing techniques and
+Deep Learning methods could represent a promising way to
+facilitate the detection of sickle cell disease from microscopic
+images of blood smears. Despite the satisfactory results
+provided by recent work (section 2), it remains challenging to
+improve the accuracy of SCD detection and allow health experts
+to integrate intelligent systems into the daily diagnosis of this
+disease. This section outlines the challenges identified in this
+investigation, which may serve as potential areas for future
+research in the realm of sickle cell disease detection.
+• The morphological variability of sickle cells: The
+diverse morphologies of sickle cells, which vary with
+the degree of anemia, can complicate the diagnosis.
+Collaborating with health professionals to accurately
+annotate cell images and categorize the various typical
+forms of targeted cells in SCD diagnosis can be
+undertaken. This work will make it possible to design
+more precise SCD identification models that would help
+doctors to better direct care based on anemia severity for
+each patient.
+• The quality of microscopic images: Microscopic images
+may exhibit noise and artifacts due to equipment quality
+and image capture conditions. Indeed, the image aspect
+can make cell segmentation and therefore detection
+more complex and degrade the learning performance of
+models. A pre-processing step incorporating more
+efficient denoising and image enhancement techniques
+can be used beforehand to further improve the quality of
+an image. Hence, improved images can aid in extracting
+more salient features that enhance the performance of
+models for sickle cell detection.
+• Treatment of overlapped cells: Effective processing of
+overlapping cells still remains one of the major
+challenges in the accurate classification of sickle cells in
+microscopic images. Blood cells frequently overlap and
+therefore complicate segmentation and classification
+tasks on image. Investigating advanced techniques using
+neural network architectures like Vision Transformers
+[46] and deeper models may be advantageous for
+enhancing the segmentation of overlapped cells.
+• Datasets: Standard datasets, such as erythrocytes IDB
+[29], are limited in size and diversity. For better
+performance, more comprehensive and diverse data
+collection initiatives, involving actual blood cell images
+obtained from healthcare facilities, could be pursued.
+Nevertheless, ethical and confidentiality concerns must
+be carefully considered.
+• Clinical validation and generality of SCD detection
+models: One of the key challenges involves the
+development of standardized clinical protocols to assess
+the real-world efficacy of AI models in clinical practice.
+This entails gathering a collection of comprehensive and
+accurate medical datasets from patients with SCD as
+well as the creation of standard diagnostic criteria.
+Furthermore, it is crucial to conduct comparisons
+between the performance of AI models to that oftraditional clinical approaches, while enforcing the
+reliability and reproducibility of results. The clinical
+validation should encompass a diverse range of patient
+populations, all while respecting specific ethical and
+data confidentiality concerns.
+IV. CONCLUSION AND FUTURE WORK
+Sickle cell disease, also called sickle cell anemia, is one of
+the most common genetic diseases worldwide. Despite notable
+progress in symptom management, SCD remains still incurable.
+This paper offers an outline of recent developments in SCD
+detection through artificial intelligence techniques. We explore
+both image processing methods, machine learning and deep
+learning approaches aimed at enhancing the identification of
+sickle cells in microscopic blood smear images. Reviewed
+methods performances, strengths and limitations are discussed
+to highlight challengers and potential research paths to explore.
+The key challenges include frequently pertain to devising
+effective approaches for handling cell overlap in images, the
+restricted availability of extensive annotated datasets for
+researchers, and AI model integration in SCD diagnosis.
+In addition, the issue of generalizing AI models in the diagnosis
+of SCD is paramount, given the global prevalence of this
+autosomal genetic condition. Subsequent research endeavors
+should aim to create an intelligent, real-time automated system
+for the abnormal cells detection and enumeration to support
+diagnostic and treatment decisions for sickle cell disease. Such
+a system could lead to a faster, more accurate, less expensive and
+more efficient process, while ensuring continuous monitoring of
+sickle cell patients.
+REFERENCES
+[1] G. J. Kato et al., « Sickle cell disease », Nat. Rev. Dis.
+Primer, vol. 4, no 1, Art. no 1, mars 2018, doi:
+10.1038/nrdp.2018.10.
+[2] V. M. Ingram, « Abnormal human haemoglobins: I. The
+comparison of normal human and sickle-cell
+haemoglobins by “fingerprinting” », Biochim. Biophys.
+Acta, vol. 28, p. 539‑545, janv. 1958, doi: 10.1016/0006-
+3002(58)90516-X.
+[3] S. J. Edelstein, J. N. Telford, et R. H. Crepeau,
+« Structure of Fibers of Sickle Cell Hemoglobin », Proc.
+Natl. Acad. Sci., vol. 70, no 4, p. 1104‑1107, avr. 1973,
+doi: 10.1073/pnas.70.4.1104.
+[4] R. E. Benesch, S. Kwong, et R. Benesch, « The effects of
+α chain mutations cis and trans to the β6 mutation on the
+polymerization of sickle cell haemoglobin », Nature, vol.
+299, no 5880, Art. no 5880, sept. 1982, doi:
+10.1038/299231a0.
+[5] « Sickle cell anemia - Symptoms & causes - Mayo
+Clinic ». Consulté le: 21 août 2023. [En ligne].
+Disponible sur: https://bit.ly/3s0D1vE
+[6] P. L. Kavanagh, T. A. Fasipe, et T. Wun, « Sickle Cell
+Disease: A Review », JAMA, vol. 328, no 1, p. 57‑68,
+juill. 2022, doi: 10.1001/jama.2022.10233.
+[7] « Protocol for “Genetic composition of sickle cell disease
+in the Arab population: A systematic review” - Ata - 2022
+- Health Science Reports - Wiley Online Library ».
+Consulté le: 21 août 2023. [En ligne]. Disponible sur:
+https://bit.ly/3rK3NZp
+[8] K. L. Hassell, « Population Estimates of Sickle Cell
+Disease in the U.S. », Am. J. Prev. Med., vol. 38, no 4,
+Supplement, p. S512‑S521, avr. 2010, doi:
+10.1016/j.amepre.2009.12.022.
+[9] D. C. Rees, T. N. Williams, et M. T. Gladwin, « Sicklecell disease », The Lancet, vol. 376, no 9757, p.
+2018‑2031, déc. 2010, doi: 10.1016/S0140-
+6736(10)61029-X.
+[10] D. Boiro et al., « Drépanocytose chez l’enfant. Profils
+clinique et évolutif à propos de 138 cas suivis au Service
+de Pédiatrie de l’Hôpital Abass Ndao de Dakar », Med
+Afr Noire En Ligne, p. 326‑332, 2016.
+[11] « A59_9-en.pdf ». Consulté le: 21 août 2023. [En ligne].
+Disponible sur: https://bit.ly/3RZBpgf
+[12] M. González-Hidalgo, F. A. Guerrero-Peña, S. HeroldGarcía, A. Jaume-I-Capó, et P. D. Marrero-Fernández,
+« Red blood cell cluster separation from digital images
+for use in sickle cell disease », IEEE J. Biomed. Health
+Inform., vol. 19, no 4, p. 1514‑1525, juill. 2015, doi:
+10.1109/JBHI.2014.2356402.
+[13] H. Ceelie, R. B. Dinkelaar, et W. van Gelder,
+« Examination of peripheral blood films using automated
+microscopy; evaluation of Diffmaster Octavia and
+Cellavision DM96 », J. Clin. Pathol., vol. 60, no 1, p.
+72‑79, janv. 2007, doi: 10.1136/jcp.2005.035402.
+[14] D. A. Diallo et al., « Dépistage néonatal ciblé de la
+drépanocytose : limites du test de falciformation (test
+d’Emmel) dans le bilan prénatal en zone ouest
+africaine », Rev. DÉpidémiologie Santé Publique, vol.
+66, no 3, p. 181‑185, mai 2018, doi:
+10.1016/j.respe.2018.02.007.
+[15] J. Ford, « Red blood cell morphology », Int. J. Lab.
+Hematol., vol. 35, no 3, p. 351‑357, 2013, doi:
+10.1111/ijlh.12082.
+[16] S. Ouedraogo, M. Bousso, A. Balde, O. Sall, C. Sall, et
+M. Soumboundou, « Automating Sickle Cell Counting
+Using Object Detection Techniques », in Pan-African
+Artificial Intelligence and Smart Systems, T. M.
+Ngatched Nkouatchah, I. Woungang, J.-R. Tapamo, et S.
+Viriri, Éd., in Lecture Notes of the Institute for Computer
+Sciences, Social Informatics and Telecommunications
+Engineering. Cham: Springer Nature Switzerland, 2023,
+p. 224‑236. doi: 10.1007/978-3-031-25271-6_14.
+[17] F.-G. Yuan, S. A. Zargar, Q. Chen, et S. Wang,
+« Machine learning for structural health monitoring:
+challenges and opportunities », in Sensors and Smart
+Structures Technologies for Civil, Mechanical, and
+Aerospace Systems 2020, SPIE, avr. 2020, p. 1137903.
+doi: 10.1117/12.2561610.
+[18] M. M. Taye, « Understanding of Machine Learning with
+Deep Learning: Architectures, Workflow, Applications
+and Future Directions », Computers, vol. 12, no 5, Art. no
+5, mai 2023, doi: 10.3390/computers12050091.[19] « Journal of Clinical Medicine | An Open Access Journal
+from MDPI ». Consulté le: 28 septembre 2023. [En
+ligne]. Disponible sur: https://bit.ly/3M2LPIt
+[20] A. A. Elsabagh et al., « Artificial intelligence in sickle
+disease », Blood Rev., vol. 61, p. 101102, sept. 2023, doi:
+10.1016/j.blre.2023.101102.
+[21] M. Sahu, A. K. Biswas, et K. Uma, « Detection of Sickle
+Cell Anemia in Red Blood Cell: A Review », Int. J. Eng.
+Appl. Sci., vol. 2, no 3, p. 257975, mars 2015.
+[22] P. I. A. Chintawar, A. Mishra, P. Narnaware, et C.
+Kuhikar, « Detection of Sickle Cells using Image
+Processing », 2016. Consulté le: 22 août 2023. [En ligne].
+Disponible sur: https://bit.ly/3rQnT3Z
+[23] M. Abdulraheem Fadhel, A. J. Humaidi, et S. R. Oleiwi,
+« Image processing-based diagnosis of sickle cell anemia
+in erythrocytes », in 2017 Annual Conference on New
+Trends in Information & Communications Technology
+Applications (NTICT), mars 2017, p. 203‑207. doi:
+10.1109/NTICT.2017.7976124.
+[24] V. Sharma, A. Rathore, et G. Vyas, « Detection of sickle
+cell anaemia and thalassaemia causing abnormalities in
+thin smear of human blood sample using image
+processing », in 2016 International Conference on
+Inventive Computation Technologies (ICICT), août 2016,
+p. 1‑5. doi: 10.1109/INVENTIVE.2016.7830136.
+[25] B. Sen, A. Ganesh, A. Bhan, S. Dixit, et A. Goyal,
+« Machine learning based Diagnosis and Classification
+Of Sickle Cell Anemia in Human RBC », in 2021 Third
+International Conference on Intelligent Communication
+Technologies and Virtual Mobile Networks (ICICV),
+févr. 2021, p. 753‑758. doi:
+10.1109/ICICV50876.2021.9388610.
+[26] A. Mohamad, R. Hamzah, A. Mokhtar, et J. Sathar,
+« Sickle cell disease verification via sobel edge
+algorithms for image processing », sept. 2017, p. 1‑4. doi:
+10.1109/ICE2T.2017.8215994.
+[27] S. Yeruva, B. P. Gowtham, Y. H. Chandana, M. S.
+Varalakshmi, et S. Jain, « Prediction of Anemia Disease
+Using Classification Methods », in Machine Learning
+Technologies and Applications, C. K. Mai, A. B. Reddy,
+et K. S. Raju, Éd., in Algorithms for Intelligent Systems.
+Singapore: Springer, 2021, p. 1‑11. doi: 10.1007/978-
+981-33-4046-6_1.
+[28] A. S, K. Ganesan, et B. B. K, « A novel deep learning
+approach for sickle cell anemia detection in human RBCs
+using an improved wrapper-based feature selection
+technique in microscopic blood smear images », Biomed.
+Eng. Biomed. Tech., vol. 68, no 2, p. 175‑185, avr. 2023,
+doi: 10.1515/bmt-2021-0127.
+[29] Consulté le: 22 août 2023. [En ligne]. Disponible sur:
+http://erythrocytesidb.uib.es/
+[30] S. Yeruva, M. S. Varalakshmi, B. P. Gowtham, Y. H.
+Chandana, et P. K. Prasad, « Identification of Sickle Cell
+Anemia Using Deep Neural Networks », Emerg. Sci. J.,
+vol. 5, no 2, Art. no 2, avr. 2021, doi: 10.28991/esj-2021-
+01270.
+[31] M. Xu, D. P. Papageorgiou, S. Z. Abidi, M. Dao, H.
+Zhao, et G. E. Karniadakis, « A deep convolutional
+neural network for classification of red blood cells in
+sickle cell anemia », PLoS Comput. Biol., vol. 13, no 10,
+p. e1005746, oct. 2017, doi:
+10.1371/journal.pcbi.1005746.
+[32] M. Zhang, X. Li, M. Xu, et Q. Li, « Image Segmentation
+and Classification for Sickle Cell Disease using
+Deformable U-Net ». arXiv, 29 octobre 2017. doi:
+10.48550/arXiv.1710.08149.
+[33] L. Alzubaidi, M. A. Fadhel, O. Al-Shamma, J. Zhang, et
+Y. Duan, « Deep Learning Models for Classification of
+Red Blood Cells in Microscopy Images to Aid in Sickle
+Cell Anemia Diagnosis », Electronics, vol. 9, no 3, Art.
+no 3, mars 2020, doi: 10.3390/electronics9030427.
+[34] B. Sen, A. Ganesh, A. Bhan, et S. Dixit, « “Deep
+Learning based diagnosis of sickle cell anemia in human
+RBC” », in 2021 2nd International Conference on
+Intelligent Engineering and Management (ICIEM), avr.
+2021, p. 526‑529. doi:
+10.1109/ICIEM51511.2021.9445293.
+[35] T. Karagül, N. Yurtay, et B. Öneç, « Diagnosing
+Hematological Disorders Using Deep Learning
+Method », Sak. Univ. J. Comput. Inf. Sci., vol. 4, no 2,
+Art. no 2, août 2021, doi: 10.35377/saucis.04.02.836375.
+[36] E. G. Dada, D. O. Oyewola, et S. B. Joseph, « Deep
+Convolutional Neural Network Model for Detection of
+Sickle Cell Anemia in Peripheral Blood Images »,
+Commun. Phys. Sci., vol. 8, no 1, Art. no 1, mars 2022,
+Consulté le: 22 août 2023. [En ligne]. Disponible sur:
+https://bit.ly/45uRGNt
+[37] « A mathematical modelling to detect sickle cell anemia
+using Quantum graph theory and Aquila optimization
+classifier ». Consulté le: 22 août 2023. [En ligne].
+Disponible sur: https://bit.ly/3M0Ru1r
+[38] « Comparison of Deep Learning Techniques in Detection
+of Sickle Cell Disease | Artificial Intelligence and
+Applications ». Consulté le: 22 août 2023. [En ligne].
+Disponible sur: https://bit.ly/46MQt5c
+[39] G. M. K. B. Karunasena, K. Herath, H. Priyankara, et A.
+Madhusanka, « Sickle Cell Disease Identification by
+Using Region with Convolutional Neural Networks (RCNN) and Digital Image Processing », vol. 1, p. 1‑08,
+janv. 2023.
+[40] I. ul Haq, S. Anwar, M. T. Khan, et U. Sadique, « An
+Intelligent Approach for Blood Cell Detection
+Employing Faster RCNN », Pak. J. Eng. Technol., vol. 6,
+no 1, Art. no 1, janv. 2023, doi: 10.51846/vol6iss1pp1-6.
+[41] M. Darrin et al., « Classification of red cell dynamics
+with convolutional and recurrent neural networks: a
+sickle cell disease case study », Sci. Rep., vol. 13, no 1,
+Art. no 1, janv. 2023, doi: 10.1038/s41598-023-27718-w.
+[42] N. G. Goswami, A. Goswami, N. Sampathila, et G. M.
+Bairy, « Sickle Cell Classification Using Deep
+Learning », in 2023 3rd International Conference on
+Intelligent Technologies (CONIT), juin 2023, p. 1‑6. doi:
+10.1109/CONIT59222.2023.10205802.[43] N. Praljak et al., « A Deep Learning Framework for
+Sickle Cell Disease Microfluidic Biomarker Assays »,
+Blood, vol. 136, no Supplement 1, p. 15‑16, nov. 2020,
+doi: 10.1182/blood-2020-141693.
+[44] Y. Chen et al., « Toward Automated Detection of Silent
+Cerebral Infarcts in Children and Young Adults With
+Sickle Cell Anemia », Stroke, vol. 54, no 8, p. 2096‑2104,
+août 2023, doi: 10.1161/STROKEAHA.123.042683.
+[45] M. Bhatia et al., « A Novel Deep Learning based Model
+for Erythrocytes Classification and Quantification in
+Sickle Cell Disease ». arXiv, 2 mai 2023. doi:
+10.48550/arXiv.2305.01663.
+[46] F. Hörst et al., « CellViT: Vision Transformers for
+Precise Cell Segmentation and Classification ». arXiv, 6
+octobre 2023. doi: 10.48550/arXiv.2306.15350.

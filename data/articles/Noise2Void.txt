@@ -1,0 +1,383 @@
+Benchmarking Noise2Void: Superior Denoising of
+Medical Microscopic Images
+Abdourahmane Balde1, Avewe Bassene2, Sèmèvo Arnaud R. M. AHOUANDJINOU3,
+Ousmane SALL4, Mamadou Soumboundou5, Youssou Faye1, Lamine Faty1
+1 Assane Seck University of Ziguinchor, Senegal (Email: A. Balde, a.b165@zig.univ.sn ;
+Y. Faye,yfaye@univ-zig.sn; L. Faty, lamine.faty@univ-zig.sn),
+2 Cheikh Anta Diop University Dakar, Senegal (Email: A. Bassene,
+avewe.bassene@ucad.edu.sn),
+3 University of Abomey-Calavi, Benin (Email: A. AHOUANDJINOU,
+arnaud.ahouandjinou@imsp-uac.org),
+4 Cheikh Hamidou KANE Digital University, Senegal (Email: O. Sall,
+ousmane1.sall@unchk.edu.sn)
+5 Iba Der Thiam University, UMRED, Diamniadio Children's Hospital, Senegal (Email: M.
+Soumboundou, mamadou.soumboundou@univ-thies.sn)
+Abstract. Microscopy is crucial for diagnosing sickle cell disease by enabling
+the examination of blood samples at the cellular level. This technique reveals
+abnormalities of red blood cells, aiding in the identification of disease-specific
+anomalies. However, image quality is frequently degraded by random 'salt and
+pepper' noise, complicating subsequent processing tasks such as segmentation
+and feature extraction. This study investigates the Noise2Void deep learning denoising model to enhance the quality of microscopic images of blood smears from
+sickle cell disease patients. By evaluating the model's performance on clinical
+data, we demonstrated that N2V outperforms traditional denoising methods as
+well as the Noise2Noise model, achieving PSNR and SSIM values of 43.98 dB
+and 0.98, respectively. Our results underscore the potential of N2V to significantly enhance data quality for the development of accurate sickle cell disease
+detection methods.
+Keywords: Denoising, Impulsive Noise, Microscopic Images, Deep Learning,
+Noise2Void, Sickle Cell Disease.
+1 Introduction
+Microscopy is an essential imaging technique for the diagnosis of sickle cell disease. It
+enables blood samples to be examined at the cellular level, revealing the abnormalities
+characteristic of this disease. The quality of microscopic images relies on the signal-tonoise ratio (SNR), which compares signal intensity to background noise [1]. Random
+'salt and pepper' noise during acquisition or transmission often disrupts images, degrading their quality and complicating tasks like segmentation, feature extraction, and detection.
+Various image processing methods have been proposed to enhance image quality by
+addressing different types of distortions, which can either affect specific regions or be
+widespread. In the context of impulse noise [2], this degradation is uniformly distributed across the entire image. Suppression of impulse noise has garnered significant attention and is a thriving area in image analysis [3]. This type of noise is distinguished
+by abrupt occurrences of very bright or very dark pixels, posing challenges in image
+interpretation. To ensure the quality of microscopic images and enable reliable processing, reducing or eliminating noise is crucial. Image denoising plays a vital role in
+diagnosing diseases such as sickle cell disease or cancer.
+Image denoising is a computer vision technique aimed at eliminating noise and restoring sharper, more legible images [4]. The effectiveness of the denoising algorithm
+greatly influences image processing results, presenting a challenge in choosing an approach tailored to the image's noise characteristics. While traditional denoising methods2
+(such as spatial and transform filtering) are widely employed for reducing impulsive
+noise [5], convolutional neural networks (CNNs) have emerged as powerful solutions,
+demonstrating good performance in image denoising [6].
+This paper conducts a comparative study of various denoising methods proposed in
+the literature and recommends the most suitable one for computer vision applications
+in diagnosing disease from image. The main contributions of this paper are following:
+- We explore the implementation challenges of applying the Deep Learning
+Noise2Void (N2V) denoising model to microscopic images of blood smears
+from sickle cell disease patients
+- We assess the N2V model's performance using simulations of clinical data,
+comparing its outcomes with traditional denoising methods and the
+Noise2Noise (N2N) model
+- We showcase N2V's superior denoising performance, demonstrating a significant advancement in developing sickle cell detection methods compared to other
+approaches
+- Metrics like MSE (Mean Squared Error), PSNR (Peak Signal-to-Noise Ratio),
+and MSSIM (Mean Structural Similarity Index Measure) are employed to assess
+the performance of various denoising methods
+The remainder of this paper is organized as follows: Section 2 presents work related
+to denoising techniques. Section 3 describes denoising methodology adopted in this
+study. Section 4 presents the experiments carried out in the study. Section 5 gives the
+simulation results of our testbed and discuss it in section 6. Finally, Section 7 summarizes the paper and outlines future work.
+2 Related Works
+Numerous studies have focused on noise suppression to enhance image quality and
+thereby improve the performance of segmentation [7], detection, and classification
+methods [8].
+Xu Weizheng et al. [9] propose a block-averaged filter in a multi-window structure
+to enhance complex image structures. This approach meets real-time denoising needs
+but neglects local image statistics, leading to significant edge degradation.
+Jona et al. [10] introduce an optimized median filter that corrects pixels affected by
+salt-and-pepper noise by comparing them with a clear 3x3 image to confirm similarity.
+The experiments demonstrated strong performance with PSNR of 36.82 dB, MSE of
+18.23, and SSIM of 0.99.
+Ziad et al. [11] propose a method for median and medium filters. They combine a
+special mask with special logical index matrices to detect and process only noisy pixels.
+The results indicate that the enhanced filters effectively manage impulse noise, achieving high PSNRs.
+Kumar et al. [12] suggest enhancing the quality of microscopic images by restoring
+features like texture, edges, contrast, and more. Comparative studies on various filters
+demonstrate that denoising microscopic images can enhance radiologists' ability to diagnose and predict specific diseases.
+Venkatesh et al. [13] conducted a comparative study between the Gaussian filter
+and the bilateral filter for denoising fluorescence microscopy images. The results
+showed that bilateral filter was more effective, achieving higher PSNR.
+Other studies have explored image correction through transformation methods including the Total Variation filter, the non-local mean filter, Block-matching and 3D
+filtering (BM3D), among others.
+Kazuaki et al. [14] applied the "Total Variation" algorithm to eliminate quantum
+noise from microscopic images. Their research aimed to optimize the entropy of microscopic images through adjustment of algorithmic hyperparameters, demonstrating effective noise suppression.
+Prasad et al. [15] thoroughly examine the efficacy of the NLM (Non-Local Means)
+filter across various noise levels, investigating the interplay between patch size, window size, and image smoothing parameters. They evaluate performance using MSE,Benchmarking Noise2Void: Superior Denoising of Medical Microscopic Images 3
+PSNR, and SSIM metrics with MRI and CT images, highlighting the critical role of
+precise parameter selection in achieving optimal denoising results.
+The BM3D method by Dabov et al. [16] effectively denoises images by grouping
+similar patches, transforming them into wavelets, applying thresholding or Wiener filtering, and then reconstructing the image. However, its performance decreases with
+higher noise levels.
+In recent years, deep learning-based denoising methods have garnered significant
+attention for their remarkable achievements in image denoising [17]. Tian et al. [18]
+introduce a comparative study of different deep learning-based denoising methods.
+Their approach focuses on convolutional neural networks (CNNs) tailored for denoising tasks involving additive white noise, real noise, blind noise, and noisy hybrid
+images. They propose a comprehensive comparative analysis based on visual image
+quality.
+Chen et al. [19] utilized the ImageNet dataset to train their image-denoising model,
+leveraging Transformer architectures and contrastive learning to enhance their IPT
+model's performance across various low-level computer vision benchmarks.
+The Noise2Noise (N2N) denoising model proposed by Lehtinen et al. [20] trains on
+pairs of noisy images to characterize and correct image degradation. However, this approach faces challenges in fields like healthcare [21], where acquiring sufficient training data is difficult.
+Addressing these limitations, Krull et al. [22] introduced Noise2Void (N2V), which
+is tailored for image denoising using a single input image without requiring reference
+images. This study explores the application of the N2V model to denoise microscopic
+images of blood smears from patients with sickle cell disease.
+3 Methodology
+The methodology employed in this study comprises three main steps: initially, RGB
+microscopic images are converted to grayscale and resized to (256x256) following collection. Subsequently, various denoising techniques (including median, mean, Gaussian, bilateral, NLM, TV, BM3D, N2N, and the N2V deep learning method) are applied
+for impulse noise reduction. Finally, evaluation metrics (MSE, PSNR, SSIM) are used
+to assess model performances that reveal of the most effective approach.
+3.1 Data Collection Process
+The experimental data used in this study come from patients diagnosed with sickle cell
+disease. These data take the form of microscopic images acquired using the EMMEL
+Fig. 1. Methodology for denoising microscopic images of blood smears.4
+test. The experiments were carried out at the UMRED laboratory, Faculty of Health,
+University of Thiès, and the Diamniadio Children's Hospital, Senegal.
+Image quality and visibility were enhanced during the capture process using laboratory
+methods. The light microscope was set to x100 magnification. The images used were
+extracted from reading fields and displayed directly on screen. Initially captured in
+RGB at (3264x1856) resolution, they were later resized to (256x256).
+3.2 Noise Characteristics of Microscopic Images
+Blood smear images captured using a light microscope to detect "sickle" shaped red
+blood cells are prone to various types of noise, including impulse noise and motion
+artifacts arising from slide preparation and handling.
+Impulse noise, also known as "salt and pepper" noise, manifests as random bright or
+dark pixels due to sensor defects, data transmission errors, or electromagnetic interference during image acquisition. Optical microscopy involves several stages and equipment, such as the microscope sensor, data transfer system, and storage device, each
+susceptible to environmental or internal electromagnetic disturbances. These disturbances degrade image quality, complicating accurate identification of sickle cells. Therefore, effective denoising methods are crucial for correcting impulse noise and ensuring
+precise object identification from microscope images. Fig. 1 shows an example of a
+microscope image, in which a set of cells can be seen as the object in the image.
+4 Experiments
+In this study, we evaluated N2V along with several denoising methods including
+median, mean, Gaussian, bilateral filters, non-local averaging, total variation, BM3D,
+and N2N using the aforementioned data. Objective metrics such as MSE, PSNR, and
+SSIM were employed to assess the performance of these methods. The original image
+size was reduced to (256x256) for our experiments.
+4.1 The Noise2Voide Model
+The N2V model is a novel approach to image denoising, notable for its capability to
+learn directly from noisy images without relying on clean reference images. It trains on
+64x64 pixel patches extracted from noisy images, where during training, certain pixels
+are randomly masked. The model learns to predict these masked pixels using surrounding unmasked pixels only. This method allows the model to effectively capture local
+structures and correlations within the data, thereby enhancing its denoising performance
+[22].
+The implementation details and training scheme are based on work in [22]. In this
+work, authors uses the U-Net architecture proposed by Ronneberger et al. [23]. This
+architecture is of depth 3, with a first convolutional layer (conv) comprising 64 filters
+Fig. 2. Image patches used during N2V training. (a) Example image from our dataset. (b) A patch for training and validation of (a).Benchmarking Noise2Void: Superior Denoising of Medical Microscopic Images 5
+of dimension (3 × 3). This number of filters doubles after each subsampling step, which
+is achieved by (2 × 2) max pooling layers. The last layer is a convolutional layer (conv)
+with a single filter (3x3), padding=1, stride=1. The root means square error
+(`train_loss='mse'`) is used as the loss function, while batch normalization is activated
+to stabilize training (`batch_norm=True`).
+Training is performed on 100 epochs, with an initial learning rate of 0.004, a patch
+size of 64, and a batch size of 32. To manipulate the masked pixels, we used the uniform
+with compensation method (`n2v_manipulator='uniform_withCP'`). A neighborhood
+radius of 5 pixels (`n2v_neighborhood_radius=5`) is chosen to improve model performance with the help of contextual information about neighborhood pixels.
+The images used in this study have a size of (255x256) pixels. The dataset consists
+of 357 images. The N2V model is trained on patches of size (64x64) pixels and a total
+of 45696 patches were generated, with 36556 patches used for training and 9149
+patches for validation. This ensures an exhaustive representation of features in the images.
+Table. 1. Characteristics of the images and patches used for N2V training.
+Parameters Values
+Total number of images 357
+Image size (256x256)
+patches size (64x64)
+Total number of patches generated 45696
+Number of patches used for training 36556
+Patches used for validation 914
+The training process for the N2V model is carried out using the Tesla T4 GPU on
+the Google Cloud. Our test bench includes the Python libraries TensorFlow, Keras,
+NumPy, and CUDA.
+4.2 Traditional Methods
+The N2V model was evaluated and compared with other traditional denoising methods
+( median filter [10], mean filter [9], Gaussian filter [24], bilateral filter [13], NLM
+[25], BM3D [16], Total Variation [14]) and the IA method (N2N) [20]. The goal is to
+pinpoint the most suitable denoising method for enhancing image correction tailored to
+our image structures. These images will be pivotal in future analyses for identifying
+pertinent features. The subsequent section outlines the metrics employed to evaluate
+these diverse filtering methods.
+4.3 Image Quality Evaluation Metrics
+The metrics used to evaluate the performance of the various image-denoising methods
+are MSE, PSNR, and MSSIM. These metrics provide quantitative and qualitative
+measures of error, perceptual quality, and structural similarity, guaranteeing a complete
+and accurate evaluation of results.
+MSE [26] or Mean Square Error: This metric compares the similarity ratio between
+the denoised image I' and the original image I. A lower MSE indicates better structural
+similarity. A lower MSE indicates better reconstruction quality, meaning that the processed image is closer to the original.
+The metrics employed to assess the performance of different image denoising methods include MSE, PSNR, and MSSIM. These metrics offer quantitative and qualitative
+assessments of error, perceptual quality, and structural similarity, ensuring a comprehensive and precise evaluation of outcomes.
+MSE [26] or Mean Square Error: This metric evaluates the similarity between the
+denoised image 𝐼′ and the original image 𝐼. A lower MSE indicates higher structural
+similarity, implying that the denoised image closely resembles the original.6
+𝑀𝑆𝐸 =
+1
+𝑀 𝑋 𝑁 ∑ ∑(𝐼(𝑚, 𝑛) − 𝐼′(𝑚, 𝑛))2
+𝑁
+𝑛=1
+𝑀
+𝑚=1
+(1)
+Where:
+(M and N) represents the image size, I and I' are the original and denoised images
+respectively.
+PSNR [27] or signal-to-noise ratio: This evaluates image quality by comparing the
+quality of the original signal with the quality of the altered signal. The higher the PSNR,
+the better the quality of the denoised image compared to the original
+𝑃𝑆𝑁𝑅 = 10𝑙𝑜𝑔10
+𝐼
+𝑚𝑎𝑥
+𝑀𝑆𝐸
+2
+(2)
+MSSIM [28] or Mean Structural Similarity Index: This metric assesses image quality
+by comparing the structural similarity between two images—the original and the denoised image. MSSIM measures include luminance, contrast, and structure to gauge
+how closely the denoised image resembles the original.
+𝑆𝑆𝐼𝑀(𝑥, 𝑦) =
+(2𝜇𝑥𝜇𝑦 + 𝐶1)(2𝜎𝑥𝑦 + 𝐶1)
+(𝜇𝑥2 + 𝜇𝑦2 + 𝐶1)(𝜎𝑥2 + 𝜎𝑦2 + 𝐶2) (3)
+Where,
+μX is the mean of ithemage X, μY is the mean of the image X,σX 2 is the variance of
+ithe mage X, σY 2 is the variance of imthe age X, σXY is the covariance between images,
+et , and C2 are constants used to stabilize the division in case of low luminance. MSSIM
+is a unitless measurement with a scale from 0 to 1.
+All metrics discussed in this section are evaluated across the various denoising algorithms described earlier, and the results of these evaluations are further elaborated in
+the following sections.
+5 Results
+We present experimental results on image denoising using 106 test images from our
+blood smear microscopy dataset. Fig. 3 display the performance metrics, focusing on
+PSNR and SSIM. The Gaussian filter demonstrated superior performance among classical methods, achieving a PSNR of 40.04 dB and an SSIM of 0.96. Its efficient execution time of 63.75 seconds makes it a fast and effective denoising technique.
+The median filter exhibited moderate performance, achieving a PSNR of 31.97 dB
+and an MSSIM of 0.86. Conversely, the medium filter, despite its quick execution time
+of 65.20 seconds, resulted in a relatively low PSNR of 27.67 dB and an MSSIM of 0.86.
+On the other hand, the bilateral filter showed a PSNR of 25.73 dB and an MSSIM of
+0.88. However, its extended execution time of 482.40 seconds restricts its practicality
+for real-time applications.
+Among the methods based on transformation and regularization, BM3D offers the
+best results with a PSNR of 27.91 dB and an MSSIM of 0.84. BM3D's execution time
+of around 364.21s is relatively long. The Total Variation (TV) method gives a fairly
+moderate (PSNR, MSSIM) pairing of (26.59 dB, 0.83), although its 47.66s execution
+time is beneficial for low-latency applications. In addition, the MNL filter showed good
+performance in terms of image correction.
+The N2V achieves an outstanding PSNR of 43.98 dB and an MSSIM of 0.98. In
+impulse noise processing, N2V outperforms N2N and all other traditional methods.
+N2V demonstrates significant noise suppression capabilities with superior contrast
+compared to other methods.Benchmarking Noise2Void: Superior Denoising of Medical Microscopic Images 7
+Fig. 4 depicts microscopic smear images from our dataset. Image (a) serves as a
+reference image with impulsive noise used in our simulations. Images (b) to (j) demonstrate the visual denoising outcomes for various methods: median filter (b), mean filter
+(c), Gaussian filter (d), bilateral filter (e), NLM (f), TV (g), BM3D (h), and N2N (j).
+N2V (i) notably preserves higher intensity values and exhibits better gray-white contrast compared to other methods across all noise levels. In contrast, the Gaussian filter
+(d) stands out for producing detailed images despite some observed blurring.
+The median filter (b) gives very good sharpness with a fast turnaround time. As for
+BM3D (h), it shows a notable ability to reduce noise, despite a drop in performance
+proportional to noise intensity. On the other hand, the NLM filter (f) gives the worst
+results, while TV (g) restores more of the textures of the images studied.
+6 Evaluation and Discussion
+The results presented in Table. 2 and Fig. 4 demonstrate that N2V surpasses all other
+studied denoising methods in terms of PSNR, MSSIM, and MSE for microscopic image
+processing. Traditional methods, effective in certain scenarios, exhibit significant drawbacks when handling impulse noise, resulting in image blurring (e.g., median and NLM
+filters) and texture degradation (median filter), which can hinder accurate object identification in image feature studies.
+In contrast to conventional filters, N2V preserves fine image details critical for analyzing microscopic images in medical contexts. Its capability to effectively manage diverse noise types across different datasets underscores its strength in image denoising.
+(a) (b) (c) (d) (e)
+(f) (g) (h) (i) (j)
+Fig. 3. Comparison of PSNR and SSIM on test data.
+Fig. 4. Visual comparisons of denoising results on a microscopic image of a blood smear
+from a patient with sickle cell disease, affected by impulse noise during image capture.8
+While traditional methods offer faster execution times, they fall short compared to
+newer methods like N2V in correcting images intended for rigorous applications such
+as diagnosing diseases like sickle cell anemia or cancer, where image quality is paramount.
+Table. 2. Performance Comparison of image quality.
+Metrics
+Methods
+Median
+filter
+Averaging
+filter
+Gaussian filter
+Bilateral
+filter NLM TV BM3D N2V N2N
+MSE 6.52 16.80 1.26 28.05 40.31 14.68 17.47 1.57 0.016
+PSNR
+(dB) 31.97 27.67 40.04 25.73 23.01 27.91 26.59 43.98 17.98
+SSIM 0.90 0.86 0.96 0.88 0.76 0.84 0.83 0.98 0.76
+Execution
+Time (s)
+75.47 65.20 63.75 482.40 93.54 364.21 47.66 8850 9426
+In this study, our focus was on mitigating impulse noise, which undermines image
+quality and hinders disease detection, such as sickle cell disease. Our findings highlight
+N2V as the preferred choice, despite its longer execution time, in settings where image
+quality is paramount. Its innovative deep-learning approach allows for effective adaptation to diverse noise types and imaging conditions, making N2V highly recommended
+for precise analysis of medical microscopic images
+This study demonstrates that deep learning-based image restoration offers the potential to effectively correct significant noise and image degradation resulting from acquisition and recording conditions.
+7 Conclusion
+In this study, we explored various denoising methods suitable for impulse noise suppression in microscopic images of blood smears. Particular attention was paid to the
+use of the N2V self-supervised learning model, designed to work efficiently with a single noisy image, making it particularly suitable for clinical environments. Our results
+show that N2V effectively removes impulse noise while preserving critical image structures and outperforming all other evaluated methods in terms of PSNR and SSIM.
+This study aimed to enhance the quality of microscopic blood smear images by leveraging deep learning denoising. Given the susceptibility of microscopic images to
+noise artifacts during acquisition, mitigating these artifacts is vital for developing robust
+and scalable automated diagnostic methods.
+In the future, we plan to use the enhancement capabilities of the N2V model to process images for more needy clinical studies in Africa; proposing an intelligent decision
+support model for the diagnosis of sickle cell disease. Indeed, sickle cell anemia primarily affects children and adolescents, requiring lifelong treatment from birth. It’s
+shown that over 50% of affected children die before the age of five without clinical
+follow-up, which can be disastrous in Southern countries.
+References
+[1] « Confocal Microscopy - Signal-to-Noise Considerations | Olympus LS ». Consulté le: 26 juin 2024. [En ligne]. Disponible sur: https://www.olympus-lifescience.com/en/microscope-resource/primer/techniques/confocal/signaltonoise/
+[2] « Microscopic image impulse noise filtering of Chinese herbal medicine using
+pulse coupled neural networks and morphology | IEEE Conference Publication |
+IEEE Xplore ». Consulté le: 26 juin 2024. [En ligne]. Disponible sur:
+https://ieeexplore.ieee.org/abstract/document/8230319Benchmarking Noise2Void: Superior Denoising of Medical Microscopic Images 9
+[3] A. Wali, A. Naseer, M. Tamoor, et S. A. M. Gilani, « Recent progress in digital
+image restoration techniques: A review », Digit. Signal Process., vol. 141, p.
+104187, sept. 2023, doi: 10.1016/j.dsp.2023.104187.
+[4] « Denoising of Microscopy Images: A Review of the State-of-the-Art, and a New
+Sparsity-Based Method | IEEE Journals & Magazine | IEEE Xplore ». Consulté
+le: 26 juin 2024. [En ligne]. Disponible sur: https://ieeexplore.ieee.org/abstract/document/8327626
+[5] L. Malinski, K. Radlak, et B. Smolka, « Is large improvement in efficiency of
+impulsive noise removal in color images still possible? », PLOS ONE, vol. 16, no
+6, p. e0253117, juin 2021, doi: 10.1371/journal.pone.0253117.
+[6] « Recent progress in image denoising: A training strategy perspective - Wu -
+2023 - IET Image Processing - Wiley Online Library ». Consulté le: 26 juin 2024.
+[En ligne]. Disponible sur: https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/ipr2.12748
+[7] B. Sen, A. Ganesh, A. Bhan, S. Dixit, et A. Goyal, « Machine learning based
+Diagnosis and Classification Of Sickle Cell Anemia in Human RBC », in 2021
+Third International Conference on Intelligent Communication Technologies and
+Virtual Mobile Networks (ICICV), févr. 2021, p. 753‑758. doi:
+10.1109/ICICV50876.2021.9388610.
+[8] « (PDF) Comparison of Deep Learning Techniques in Detection of Sickle Cell
+Disease ». Consulté le: 30 mai 2024. [En ligne]. Disponible sur:
+https://www.researchgate.net/publication/370528934_Comparison_of_Deep_Learning_Techniques_in_Detection_of_Sickle_Cell_Disease?enrichId=rgreq-ea4fb80fed1111c83debe3aabc4bbc0aXXX&enrichSource=Y292ZXJQYWdlOzM3MDUyODkzNDtBUzoxMTQzM
+TI4MTE3OTQ4MDc2NEAxNjkxMjM2OTkyNDQx&el=1_x_3&_esc=publica
+tionCoverPdf
+[9] X. Weizheng, X. Chenqi, J. Zhengru, et H. Yueping, « Digital Image Denoising
+Method Based on Mean Filter », in 2020 International Conference on Computer
+Engineering and Application (ICCEA), mars 2020, p. 857‑859. doi:
+10.1109/ICCEA50009.2020.00188.
+[10] B. R. Jana, H. Thotakura, A. Baliyan, M. Sankararao, R. G. Deshmukh, et S. R.
+Karanam, « Pixel density based trimmed median filter for removal of noise from
+surface image », Appl. Nanosci., vol. 13, no 2, p. 1017‑1028, févr. 2023, doi:
+10.1007/s13204-021-01950-0.
+[11] Z. Al Qadi et H. Zaini, « Improving Average and Median Filters », Int. J. Comput. Sci. Mob. Comput., vol. 12, févr. 2023, doi:
+10.47760/ijcsmc.2023.v12i02.001.
+[12] A. Kumar, S. Srivastava, R. Sarin, et R. Irizarry, « A comparative study of different denoising and enhancement techniques for blood cell images », p.
+297‑303, janv. 2023, doi: 10.1049/icp.2023.1506.
+[13] M. Venkatesh, K. Mohan, et C. S. Seelamantula, « Directional bilateral filters for
+smoothing fluorescence microscopy images », AIP Adv., vol. 5, no 8, p. 084805,
+août 2015, doi: 10.1063/1.4930029.
+[14] « Atomic-resolution STEM image denoising by total variation regularization |
+Microscopy | Oxford Academic ». Consulté le: 27 mai 2024. [En ligne]. Disponible sur: https://academic.oup.com/jmicro/article-abstract/71/5/302/6609836?redirectedFrom=fulltext
+[15] P. Prasad, J. Anitha, et B. Biji, « Performance Analysis of Non-Local Means Denoising on Medical Images and the Impact of Filter Parameter Variation », in
+2024 International Conference on Wireless Communications Signal Processing
+and Networking (WiSPNET), mars 2024, p. 1‑5. doi: 10.1109/WiSPNET61464.2024.10532872.
+[16] ’Omid Pakdelazar’ et ’Gholamali Rezai-rad’, « Improvement of BM3D Algorithm and Employment to Satellite and CFA Images Denoising », arXiv.org.
+Consulté le: 28 mai 2024. [En ligne]. Disponible sur:
+https://arxiv.org/abs/1112.2386v110
+[17] W. Wu, M. Chen, Y. Xiang, Y. Zhang, et Y. Yang, « Recent progress in image
+denoising: A training strategy perspective », IET Image Process., vol. 17, no 6,
+p. 1627‑1657, 2023, doi: 10.1049/ipr2.12748.
+[18] C. Tian, L. Fei, W. Zheng, Y. Xu, W. Zuo, et C.-W. Lin, « Deep learning on
+image denoising: An overview », Neural Netw., vol. 131, p. 251‑275, nov. 2020,
+doi: 10.1016/j.neunet.2020.07.025.
+[19] H. Chen et al., « Pre-Trained Image Processing Transformer ». arXiv, 8 novembre 2021. doi: 10.48550/arXiv.2012.00364.
+[20] J. Lehtinen et al., « Noise2Noise: Learning Image Restoration without Clean
+Data », arXiv.org. Consulté le: 1 juin 2024. [En ligne]. Disponible sur: https://arxiv.org/abs/1803.04189v3
+[21] T.-O. Buchholz, M. Jordan, G. Pigino, et F. Jug, « Cryo-CARE: Content-Aware
+Image Restoration for Cryo-Transmission Electron Microscopy Data », arXiv.org. Consulté le: 1 juin 2024. [En ligne]. Disponible sur: https://arxiv.org/abs/1810.05420v2
+[22] A. Krull, T.-O. Buchholz, et F. Jug, « Noise2Void - Learning Denoising from
+Single Noisy Images ». arXiv, 5 avril 2019. doi: 10.48550/arXiv.1811.10980.
+[23] O. Ronneberger, P. Fischer, et T. Brox, « U-Net: Convolutional Networks for
+Biomedical Image Segmentation ». arXiv, 18 mai 2015. doi:
+10.48550/arXiv.1505.04597.
+[24] A. Krull et al., « Image Denoising and the Generative Accumulation of Photons », présenté à Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision, 2024, p. 1528‑1537. Consulté le: 22 avril 2024. [En
+ligne]. Disponible sur: https://openaccess.thecvf.com/content/WACV2024/html/Krull_Image_Denoising_and_the_Generative_Accumul
+ation_of_Photons_WACV_2024_paper.html
+[25] S. Herbreteau et C. Kervrann, « A unified framework of non-local parametric
+methods for image denoising ». arXiv, 21 février 2024. doi:
+10.48550/arXiv.2402.13816.
+[26] « Évaluation de la qualité des images via FSIM, SSIM, MSE et PSNR : une étude
+comparative ». Consulté le: 25 juin 2024. [En ligne]. Disponible sur:
+https://www.scirp.org/journal/paperinformation?paperid=90911
+[27] « Signal-to-Noise Ratio - an overview | ScienceDirect Topics ». Consulté le: 25
+juin 2024. [En ligne]. Disponible sur: https://www.sciencedirect.com/topics/engineering/signal-to-noise-ratio
+[28] Z. Wang, A. C. Bovik, H. R. Sheikh, et E. P. Simoncelli, « Image quality assessment: from error visibility to structural similarity », IEEE Trans. Image Process.,
+vol. 13, no 4, p. 600‑612, avr. 2004, doi: 10.1109/TIP.2003.819861.

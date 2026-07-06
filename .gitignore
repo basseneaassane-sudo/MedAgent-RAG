@@ -1,0 +1,19 @@
+#Environnement virtuel Python (trop lourd et personnel)
+medagent-env/
+venv/
+env/
+
+#Fichiers de secrets (JAMAIS sur GitHub !)
+.env
+
+#Base de données vectorielle locale (trop lourde, on la régénère)
+chroma_db/
+
+# Fichiers temporaires Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Dossiers système Windows
+Desktop.ini
+.DS_Store

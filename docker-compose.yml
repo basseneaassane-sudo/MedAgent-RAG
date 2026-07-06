@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      # Avant : POSTGRES_USER: medagent
+      # Maintenant : 
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # Avant : DATABASE_URL: postgresql://medagent:medagent123@db:5432/medagentdb
+      # Maintenant : 
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+      CHROMA_PERSIST_DIR: /app/chroma_db
+      API_KEY: ${API_KEY}
+      MAX_TOKENS_PER_REQUEST: ${MAX_TOKENS_PER_REQUEST}
+      MAX_REQUESTS_PER_MINUTE: ${MAX_REQUESTS_PER_MINUTE}
+    volumes:
+      - ./chroma_db:/app/chroma_db
+      - ./data:/app/data
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
