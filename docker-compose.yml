@@ -1,4 +1,5 @@
 services:
+# Service 1 : Base de données PostgreSQL
   db:
     image: postgres:15
     restart: unless-stopped
@@ -17,7 +18,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
+      
+ # Service 2 : API FastAPI MedAgent
   api:
     build: .
     restart: unless-stopped

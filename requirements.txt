@@ -138,3 +138,6 @@ xxhash==3.8.0
 yarl==1.24.2
 zstandard==0.25.0
 numpy==1.26.4
+pymupdf==1.24.7
+#langchain-text-splitters==0.2.2
+langchain-text-splitters>=0.3.0
