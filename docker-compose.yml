@@ -41,5 +41,18 @@ services:
       db:
         condition: service_healthy
 
+# Service 3 : Tableau de bord visuel
+  grafana:
+    image: grafana/grafana:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Mot de passe par défaut
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - db
 volumes:
   postgres_data:
+  grafana_data:
